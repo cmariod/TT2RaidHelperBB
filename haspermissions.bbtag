@@ -1,0 +1,1 @@
+{set; ~hasperms; {hasrole; ["824845491132694528", "527677545198518273"]}}{if; {get; ~hasperms}; ==; false; {output;Hooman, who are you to command me?}{return}}

@@ -1,0 +1,33 @@
+{execcc;haspermissions}
+
+{if;{argslength};==;0;
+```
+Command to set previewed raid as active to generate {prefix}summary
+
+Usage:
+{prefix}{commandname} tier-zone
+
+Example:
+{prefix}{commandname} 3-49
+}
+
+{set; ~iscacheexpired; {bool;!=; {time;YYYYWW}; {get; _raidpreviewlastrun}}} {// if cached data is on different week}
+{set; ~arg0; {jget; {argsarray}; 0}}
+
+{// check if data exists in cache and cache is recent}
+{if; {logic;||;
+  {get; ~iscacheexpired};
+  {bool;
+    ==;
+    {length;{filter;~element;{jkeys;{get;_cache}};{bool;{get;~element};startswith;{get;~arg0}}}};
+    0
+  }
+}; 
+  {output;Raid not found, please use {prefix}preview first}
+;
+  {set; _raidtierzone; {get; ~arg0}}
+  {set; _activeraidavg; {get; _raidunbuffedavg}}
+  {set; _activeraidmorale; {get; _raidmorale}}
+  {set; _activeraidpower; {get; _membercount}}
+  {output;Done!}
+}

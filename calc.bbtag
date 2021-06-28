@@ -1,0 +1,15 @@
+{set; ~formula; {argsarray}}
+{set; ~operators; ["*", "/", "+", "-"]}
+{foreach;~element;~operators;
+  {while;{indexof; {get; ~formula}; {get;~element}};!=;-1;
+    {set; ~nd1; {jget; {get; ~formula}; {math;-;{indexof; {get; ~formula}; {get;~element}};1}}}
+    {set; ~nd2; {jget; {get; ~formula}; {math;+;{indexof; {get; ~formula}; {get;~element}};1}}}
+    {splice; 
+      {get;~formula}; 
+      {math;-;{indexof; {get; ~formula}; {get;~element}};1}; 
+      3; 
+      {math; {get;~element}; {get; ~nd1}; {get; ~nd2}}
+    }
+  }
+}
+{output; {join; {get; ~formula};}}

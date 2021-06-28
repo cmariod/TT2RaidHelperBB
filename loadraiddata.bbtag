@@ -2,7 +2,7 @@
 
 { set; _raiddata;
   { jget; { request;
-    https://sheets.googleapis.com/v4/spreadsheets/1uqnXwyuhbAviMUyM_ZfWM0GbPMJNsmFHk71hvU7gDF8/values/DB!B1?key=AIzaSyCdovpkIX1Vkl3pfYrU8MNdfl1OihI8pJU
+    https://sheets.googleapis.com/v4/spreadsheets/1uqnXwyuhbAviMUyM_ZfWM0GbPMJNsmFHk71hvU7gDF8/values/DB!B1?key=<api_key_here>
   }; body.values.0.0 }
 }
 {output;Done!}

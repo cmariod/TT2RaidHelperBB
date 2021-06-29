@@ -1,9 +1,9 @@
 {execcc;haspermissions}
 
-{ set; _raiddata;
-  { jget; { request;
-    https://tt2images.s3-ap-southeast-1.amazonaws.com/raiddata.json
-  }; body.values.0.0 }
+{set; _raiddata; 
+  {jclean; {jget; 
+    {request; https://raw.githubusercontent.com/cmariod/TT2RaidHelperBB/master/examples/raiddata.json }
+  ; body}}
 }
 {// https://sheets.googleapis.com/v4/spreadsheets/1uqnXwyuhbAviMUyM_ZfWM0GbPMJNsmFHk71hvU7gDF8/values/DB!B1?key=<api_key_here>}
-{output;Done!}
+{if;{md5; {get; _raiddata}}; ==; 8a886eec219109fc42a7cd325f29014d; {output;Done!}; {output;Hmm something went wrong!}}

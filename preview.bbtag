@@ -18,9 +18,9 @@ Titan Configuration:
 
 Defaults:
 - d will default to last known input or error
-- m will default to last known input or 50
+- m will default to last known input or minimum for raid tier
 - s will default to last known input for the same tierzone or error
-- buff,debuff will default to last known input for the same tierzone or none
+- buff,debuff will default to last known input for the same tierzone or error
 - titan strategy will default to last known input for the same tierzone or standard strategy
   strategy follows part id sequence: 23456789, refer to part number below, 0 to skip and 1 to kill
 
@@ -37,7 +37,7 @@ Defaults:
 Related commands:
 {realpad;{prefix}raidbuffs;20} to get list of buffs and debuffs
 {realpad;{prefix}raidset;20} to mark raid tier and zone as started (only available after {prefix}{commandname})
-{realpad;{prefix}raidsummary;20} to print out cycle phases prediction
+{realpad;{prefix}summary;20} to print out cycle phases prediction
 ```
 ```Example:
 {file;buffer:{jget;{request;https://cdn.discordapp.com/attachments/753609404619948083/857465626132742164/image0.jpg};body};raidscreen.jpg}

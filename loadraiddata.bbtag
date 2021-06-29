@@ -2,7 +2,8 @@
 
 { set; _raiddata;
   { jget; { request;
-    https://sheets.googleapis.com/v4/spreadsheets/1uqnXwyuhbAviMUyM_ZfWM0GbPMJNsmFHk71hvU7gDF8/values/DB!B1?key=<api_key_here>
+    https://tt2images.s3-ap-southeast-1.amazonaws.com/raiddata.json
   }; body.values.0.0 }
 }
+{// https://sheets.googleapis.com/v4/spreadsheets/1uqnXwyuhbAviMUyM_ZfWM0GbPMJNsmFHk71hvU7gDF8/values/DB!B1?key=<api_key_here>}
 {output;Done!}

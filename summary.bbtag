@@ -101,19 +101,24 @@
       ;
     }
     {increment; ~totalhitsincycle; {get;~hitsused}; false}
+    
     {if;{get;~cycleremaininghits};>=;{get;~hitsused};
+      {set; ~hitcycleprcnt; {math;/; {ceil;{get;~totalhitsincycle}}; {get; ~totalhitpercycle}}}
+      {set; ~hitcycleprcnt; {if; {get;~hitcycleprcnt}; <=; 0.4;Early;{if; {get;~hitcycleprcnt}; <=; 0.7;Mid;Late}}}
       {//push; ~cyclesteps; :{get;~phase}:({numformat;{get;~totalhitsincycle};2})({numformat;{get;~hitsused};2})({numformat;{get;~hitsusedlabel};2})({numformat;{get;~cycleremaininghits};2}){space}}
-      {push; ~cyclesteps; {get; _{get;~phase}Emoji} ({round;{get;~totalhitsincycle}}){space}}
+      {push; ~cyclesteps; {get; _{get;~phase}Emoji} {get; ~hitcycleprcnt} ({ceil;{get;~totalhitsincycle}}){space}}
     ;
       {// next cycle}
-      {//push; ~cyclesteps; {get; _{get;~phase}Emoji} ({round;{get;~totalhitsincycle}}){space}}
+      {//push; ~cyclesteps; {get; _{get;~phase}Emoji} ({ceil;{get;~totalhitsincycle}}){space}}
       {jset; ~cycledetails; {get;~currentcycle}.titans.{get;~index}.steps; {get; ~cyclesteps}; create}
       
       {set; ~cyclesteps; []}
       {decrement; ~hitsusedlabel; {get;~cycleremaininghits}; false}
       {decrement; ~totalhitsincycle; {get; ~totalhitpercycle}; false}
       {increment; ~cycleremaininghits; {get; ~totalhitpercycle}; false}
-      {push; ~cyclesteps; {get; _{get;~phase}Emoji} ({round;{get;~totalhitsincycle}}){space}}
+      {set; ~hitcycleprcnt; {math;/; {ceil;{get;~totalhitsincycle}}; {get; ~totalhitpercycle}}}
+      {set; ~hitcycleprcnt; {if; {get;~hitcycleprcnt}; <=; 0.4;Early;{if; {get;~hitcycleprcnt}; <=; 0.7;Mid;Late}}}
+      {push; ~cyclesteps; {get; _{get;~phase}Emoji} {get; ~hitcycleprcnt} ({ceil;{get;~totalhitsincycle}}){space}}
       
       {increment; ~currentcycle}
       {push; ~cycledetails; {j;{}}}

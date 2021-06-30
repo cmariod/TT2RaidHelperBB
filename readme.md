@@ -17,6 +17,14 @@ Or you can manually do that in discord by executing command below, replace comma
 
 `.cc set <commandname> <code>`
 
+## Emoji Setup for Summary Command
+
+You will need to manually set emoji for each phase in their respective variable. I might create dedicated command for this, but for now do below
+`.cc test {set; _PrismEmoji; <emoji_here>}`
+`.cc test {set; _IVEmoji; <emoji_here>}`
+`.cc test {set; _VMEmoji; <emoji_here>}`
+`.cc test {set; _deadEmoji; <emoji_here>}`
+
 ## Required CC
 - .haspermissions
 - .loadraiddata

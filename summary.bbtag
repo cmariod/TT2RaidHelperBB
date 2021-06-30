@@ -103,17 +103,17 @@
     {increment; ~totalhitsincycle; {get;~hitsused}; false}
     {if;{get;~cycleremaininghits};>=;{get;~hitsused};
       {//push; ~cyclesteps; :{get;~phase}:({numformat;{get;~totalhitsincycle};2})({numformat;{get;~hitsused};2})({numformat;{get;~hitsusedlabel};2})({numformat;{get;~cycleremaininghits};2}){space}}
-      {push; ~cyclesteps; :{get;~phase}:({round;{get;~totalhitsincycle}}){space}}
+      {push; ~cyclesteps; {get; _{get;~phase}Emoji} ({round;{get;~totalhitsincycle}}){space}}
     ;
       {// next cycle}
-      {//push; ~cyclesteps; :{get;~phase}:({round;{get;~totalhitsincycle}}){space}}
+      {//push; ~cyclesteps; {get; _{get;~phase}Emoji} ({round;{get;~totalhitsincycle}}){space}}
       {jset; ~cycledetails; {get;~currentcycle}.titans.{get;~index}.steps; {get; ~cyclesteps}; create}
       
       {set; ~cyclesteps; []}
       {decrement; ~hitsusedlabel; {get;~cycleremaininghits}; false}
       {decrement; ~totalhitsincycle; {get; ~totalhitpercycle}; false}
       {increment; ~cycleremaininghits; {get; ~totalhitpercycle}; false}
-      {push; ~cyclesteps; :{get;~phase}:({round;{get;~totalhitsincycle}}){space}}
+      {push; ~cyclesteps; {get; _{get;~phase}Emoji} ({round;{get;~totalhitsincycle}}){space}}
       
       {increment; ~currentcycle}
       {push; ~cycledetails; {j;{}}}
@@ -127,7 +127,7 @@
 
 {jset; _cache; summary.cycledetails; {get;~cycledetails}; create}
 
-{output;```Strategy for {get; _raidtierzone} at {numformat;{get; ~bavgmil};2}M average DMG:
+{output;Strategy for {get; _raidtierzone} at {numformat;{get; ~bavgmil};2}M average DMG:
 
 Raid Buff : {jget; ~computeddata; buff.text}
 Morale Buff : +{get; _activeraidmorale}%
@@ -142,4 +142,4 @@ Debuffs:
 }
 }
 }
-```}
+}

@@ -256,6 +256,10 @@ default morale 10% with same buff debuff and strat:
     {parsefloat;{get;~raidenemy{get; ~enemyid}hpprcnt}};
     {parsefloat;{get;~raidenemy{get; ~enemyid}hpprcntb}}
   }; create}
+  {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.hpprcnte; {math;+;
+    {parsefloat;{jget; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.hpprcnta}};
+    {parsefloat;1.0}
+  }; create}
   
   {set; ~raidenemy{get;~enemyid}finalmod; {math;+;
     {parsefloat; {jget; ~raidbufftab; DamageMod}};
@@ -264,9 +268,9 @@ default morale 10% with same buff debuff and strat:
     {math;/;
       {math;+;
         {get; ~raidenemy{get;~enemyid}mod};
-        {get; ~raidenemy{get;~enemyid}hpprcnt}
+        {jget; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.hpprcnte}
       };
-      {get; ~raidenemy{get;~enemyid}hpprcnt}
+      {jget; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.hpprcnte}
     }
   }}
   

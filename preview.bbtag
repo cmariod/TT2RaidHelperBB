@@ -134,7 +134,7 @@ default morale 10% with same buff debuff and strat:
 
 {// get buff text}
 {set; ~raidbuffacro; {get; ~raidbuff} }
-{set; ~raidbuffindex; {shift;{filter;~element;{jkeys;{get;_raiddata};Buffs};{bool;{get;~element};startswith;{get; ~raidbuffacro}|}}} }
+{set; ~raidbuffindex; {shift;{filter;~element;{jkeys;_raiddata;Buffs};{bool;{get;~element};startswith;{get; ~raidbuffacro}|}}} }
 {set; ~raidbufftext; {pop;{split;{get;~raidbuffindex};|}} }
 {set; ~raidbufftab; {jget; _raiddata; Buffs.{get;~raidbuffindex}} }
 {jset; _cache ; {get; ~raidtierzone}.computed.buff.index; {get;~raidbuffindex}; create}
@@ -163,7 +163,7 @@ default morale 10% with same buff debuff and strat:
   {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.strat; {get;~raidtitan{get;~index}strat}; create}
   
   {// get debuff text}
-  {set; ~raiddebuff{get;~index}index; {shift;{filter;~element;{jkeys;{get;_raiddata};Debuffs };{bool;{get;~element};startswith;{get; ~raiddebuff{get;~index}acro}|}}} }
+  {set; ~raiddebuff{get;~index}index; {shift;{filter;~element;{jkeys;_raiddata;Debuffs };{bool;{get;~element};startswith;{get; ~raiddebuff{get;~index}acro}|}}} }
   {set; ~raiddebuff{get;~index}text; {pop;{split;{get;~raiddebuff{get;~index}index};|}} }
   {set; ~raiddebuff{get;~index}tab; {jget; _raiddata; Debuffs.{get;~raiddebuff{get;~index}index}} }
   {jset; _cache; {get; ~raidtierzone}.computed.debuff{get;~index}.text; {get;~raiddebuff{get;~index}text}; create}
@@ -334,10 +334,10 @@ default morale 10% with same buff debuff and strat:
   {set; ~enemyid; {jget;~raidtierzonedata;Titan{get;~titanid}}}
   {increment; ~raidtitan{get;~titanid}qty}
   
-  {increment; ~raidhpprcnt; {jget; _cache; {get; ~raidtierzone}.computed.titan{get;~titanid}.hpprcnta}; false}
-  {increment; ~raidhpprcnt; {parsefloat; 1.0}; false}
+  {set; ~titaneffectivehp; {math;+; {jget; _cache; {get; ~raidtierzone}.computed.titan{get;~titanid}.hpprcnta}; {parsefloat; 1.0}}}
+  {increment; ~raidhpprcnt; {get; ~titaneffectivehp}; false}
   {increment; ~raidmod; {math;*;
-    {get; ~raidenemy{get;~enemyid}hpprcnt};
+    {get; ~titaneffectivehp};
     {get; ~raidenemy{get;~enemyid}finalmod}
   };false}
 }

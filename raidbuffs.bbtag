@@ -4,13 +4,13 @@
 ```{prefix}{commandname} [-b <buff_keyword>] [-d <debuff_keyword>]
 
 Buffs:
-{join;{jkeys;{get;_raiddata};Buffs };{newline}}
+{join;{jkeys;_raiddata;Buffs };{newline}}
 
 Debuffs:
-{join;{jkeys;{get;_raiddata};Debuffs };{newline}}
+{join;{jkeys;_raiddata;Debuffs };{newline}}
 ```}{return}}
 
 {output;```
-{if; {flagset;b}; Buff:{newline}{join;{filter;~element;{jkeys;{get;_raiddata};Buffs };{bool;{get;~element};startswith;{flag;b}}};{newline}}{newline}}
-{if; {flagset;d}; Debuff:{newline}{join;{filter;~element;{jkeys;{get;_raiddata};Debuffs };{bool;{get;~element};startswith;{flag;d}}};{newline}}}
+{if; {flagset;b}; Buff:{newline}{join;{filter;~element;{jkeys;_raiddata;Buffs };{bool;{get;~element};startswith;{flag;b}}};{newline}}{newline}}
+{if; {flagset;d}; Debuff:{newline}{join;{filter;~element;{jkeys;_raiddata;Debuffs };{bool;{get;~element};startswith;{flag;d}}};{newline}}}
 ```}

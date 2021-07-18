@@ -1,5 +1,8 @@
 {execcc;haspermissions}
 
+{ if; { flagset; t }; {output; ```{prefix}{commandname} -r 3-60 -d 7.5 -m 15.5 -b spe -1 afc|11111111 -2 bsd|10111111 -3 rd|01111111 -s 12332 -p 50```
+}{return}}
+
 { if; {logic; ||; { flagset; h }; {bool; {length; {flagsarray}}; ==; 1}}; {output;
 ```
 Parameters:

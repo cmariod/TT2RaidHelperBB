@@ -46,10 +46,14 @@
 
   {jset; ~cycledetails; {get;~currentcycle}.titans.{get;~index}.label; {jget; ~computeddata; titan{get;~enemyid}.name}; create}
   
-  {set; ~titanhpnonvma; {math;-;
-    {parsefloat;{jget; ~computeddata; titan{get;~enemyid}.hpprcnta}};
-    {parsefloat;{jget; ~computeddata; titan{get;~enemyid}.vm.hpprcnta}}
-  }}
+  {set; ~titanhpnonvma; {parsefloat;{jget; ~computeddata; titan{get;~enemyid}.hpprcnta}} }
+  {decrement; ~titanhpnonvma; 
+    {if; {flagset; {math;+;{get; ~index};1}};
+      0;
+      {parsefloat;{jget; ~computeddata; titan{get;~enemyid}.vm.hpprcnta}}
+    }
+  ; false}
+  
   {set; ~titanhitsnonvma; {math;*;
     {get;~titanhpnonvma};
     {get;~basehphits}
@@ -66,9 +70,12 @@
   }}
   {jset; _cache; summary.titan{get;~enemyid}.hits.nonvmb; {get;~titanhitsnonvmb}; create}
   
-  {set; ~titanhitsvma; {math;*;
-    {parsefloat;{jget; ~computeddata; titan{get;~enemyid}.vm.hpprcnta}};
-    {get;~basehphits}
+  {set; ~titanhitsvma; {if; {flagset; {math;+;{get; ~index};1}};
+      0;
+      {math;*;
+        {parsefloat;{jget; ~computeddata; titan{get;~enemyid}.vm.hpprcnta}};
+        {get;~basehphits}
+      }
   }}
   {set; ~titanhitsvmb; {math;*;
     {math;-;

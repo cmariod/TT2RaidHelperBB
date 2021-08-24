@@ -6,4 +6,4 @@
   ; body}}
 }
 {// https://sheets.googleapis.com/v4/spreadsheets/1uqnXwyuhbAviMUyM_ZfWM0GbPMJNsmFHk71hvU7gDF8/values/DB!B1?key=<api_key_here>}
-{if;{md5; {get; _raiddata}}; ==; ecc5d6526537d379de6a01b508f829e2; {output;Done!}; {output;Hmm something went wrong!}}
+{if;{md5; {get; _raiddata}}; ==; 54302ac928a799971a40c300e64f51a7; {output;Done!}; {output;Hmm something went wrong!}}

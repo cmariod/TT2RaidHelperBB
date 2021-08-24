@@ -5,7 +5,7 @@
 {set; ~summarydata; {jclean;{jget; _cache; {get; _raidtierzone}}}}
 {set; ~computeddata; {jclean;{jget; _cache; {get; _raidtierzone}.computed}}}
 
-{// calculate cycle prediction here}
+{//; calculate cycle prediction here}
 {set; ~raidtier; {shift; {split; {get; _raidtierzone}; -}}}
 {if; {get; ~raidtier}; ==; 4;
   {set; ~hitspercycle; 5}
@@ -129,7 +129,7 @@
       
       {push; ~cyclesteps; {repeat;{space};6}{get; ~emoji} {get; ~hitcycleprcnt} ({ceil;{get;~totalhitsincycle}}){space}}
     ;
-      {// next cycle}
+      {//; next cycle}
       {//push; ~cyclesteps; {repeat;{space};6}{get; ~emoji} {get; ~hitcycleprcnt} ({ceil;{get;~totalhitsincycle}}){space}}
       
       {decrement; ~hitsusedlabel; {get;~cycleremaininghits}; false}

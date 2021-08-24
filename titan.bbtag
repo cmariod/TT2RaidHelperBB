@@ -1,0 +1,56 @@
+{execcc;haspermissions}
+
+{if;{argslength};==;0;
+```
+Command to set strategy for specific titan. Strategy follows part id sequence: 23456789, refer to part number below, 0 to skip and 1 to kill
+
+    ┌───┐
+┌───┤ 2 ├───┐
+│ 4 ├───┤ 9 │
+├───┤ 3 ├───┤
+│ 5 │   │ 8 │
+└─┬─┴─┬─┴─┬─┘
+  │ 6 │ 7 │
+  └───┴───┘
+
+Usage:
+{prefix}{commandname} <titan_fullname_or_partialname> <part_strategy>
+
+Example to Set Mohaca to not hit head(2) and chest(3):
+{prefix}{commandname} mo 00111111
+```{return}
+}
+
+{//;default strategy}
+{if;{length;{get;_strat}};0;{set;_strat;{j;{"Enemy1":"11111111","Enemy2":"11111111","Enemy3":"10111111","Enemy4":"01111111","Enemy5":"10111111","Enemy6":"01111111"}}}}
+
+{set; ~arg0; {jget; {argsarray}; 0}}
+{set; ~arg1; {jget; {argsarray}; 1}}
+
+{if; {get; ~arg0}; ==; list; 
+  {set; ~embed; {j;{}}}
+  {jset; ~embed; title; Titan Strategy List ;create}
+  {jset; ~embed; description; (O)Hit (X)Avoid ;create}
+  {set; ~embedfields; []}
+  {for;~index;0;<;6;
+    {set; ~embedfield; {j;{}}}
+    {set; ~titanstrategy; {split;{regexreplace;{regexreplace;{jget;{jvalues;_strat};{get; ~index}};/1/gi;O};/0/gi;X};}}
+    {jset; ~embedfield; name; {jget;_raiddata;Enemies.{jget;{jkeys;_strat};{get; ~index}}} ;create}
+    {jset; ~embedfield; value; {jget;~titanstrategy;2} {jget;~titanstrategy;0} {jget;~titanstrategy;7}{newline}{jget;~titanstrategy;3} {jget;~titanstrategy;1} {jget;~titanstrategy;6}{newline}   {jget;~titanstrategy;4} {jget;~titanstrategy;5} ;create}
+    {jset; ~embedfield; inline; true ;create}
+    {push; ~embedfields; {get; ~embedfield}}
+  }
+  {jset; ~embed; fields; {get; ~embedfields} ;create}
+  {output; {embed;{jclean;{get; ~embed}}}}
+  {return}
+}
+
+{if; {length; {get; ~arg1}}; !=; 8; {output; Missing part in strategy}{return};}
+
+{set; ~match; {shift;{filter;~element;{jvalues; _raiddata; Enemies};{bool;{get;~element};startswith;{capitalize;{get; ~arg0}}}}}}
+{set; ~matchidx; {indexof; {jvalues; _raiddata; Enemies}; {get; ~match}}}
+{set; ~enemyid; {jget; {jkeys; _raiddata; Enemies}; {get; ~matchidx}}}
+
+{jset; _strat; {get; ~enemyid}; {get; ~arg1}}
+
+{output; {get; ~match} strategy set to {get; ~arg1}}

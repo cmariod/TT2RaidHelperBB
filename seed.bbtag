@@ -1,0 +1,44 @@
+{execcc;haspermissions}
+
+{if;{argslength};==;0;
+```
+Command to set raid data seed
+
+Notes:
+- get the message id by right clicking on gh post that you followed in your server.
+- execute this command in the same channel as gh post in your server.
+
+Usage:
+{prefix}{commandname} <message_id>
+
+Example:
+{prefix}{commandname} 877931038964338711
+```{return}
+}
+
+{set; ~arg0; {jget; {argsarray}; 0}}
+
+{//;auto detection to load discord cdn url straight}
+
+{//;auto detection to accept message link to parse message id and channel id from the url(the last 2 segments)}
+
+{if; {isarray;{messageattachments;{get; ~arg0}}}; ; {set; ~error; Message doesn't have attachment}}
+
+{if; {length; {get; ~error}}; >; 0; {output;Error: {get; ~error}}{return}}
+
+{set; ~seed; 
+  {jclean; {jget; 
+    {request; {jget; {messageattachments;{get; ~arg0}}; 0} }
+  ; body}}
+}
+
+{if; {isarray;{get;~seed}};
+  {set; _seed; {j;{}}}
+  {foreach;~elem;~seed;
+    {jset; _seed; {jget;~elem;Tier}-{jget;~elem;Level}; {get; ~elem}; create}
+  }
+  
+  {output; {length;{get;~seed}} seed data loaded}
+;
+  {output; Hmm, something is wrong}
+}

@@ -1,0 +1,402 @@
+{execcc;haspermissions}
+
+{ if; { flagset; t }; {output; ```{prefix}{commandname} -r 3-60 -d 7.5 -m 15.5 -1 0.94 -2 1.0 -3 0.88 -p 50```
+}{return}}
+
+{ if; {logic; ||; { flagset; h }; {bool; {length; {flagsarray}}; ==; 1}}; {output;
+```
+Parameters:
+  -h  Show this help
+  -r  {realpad;<tier-zone>;25} e.g. 3-49
+  -d  {realpad;<unbuffedclanaverage>;25} unbuffed clan average, e.g. 5.5
+  -m  {realpad;<morale>;25} morale, e.g. 29.2
+  -p  {realpad;<power>;25} clan power / member count, e.g. 50
+  
+Titan Curse Configuration:
+  -1  {realpad;<debuff_titan1[|strat]>;25} titan 1 curse mod, e.g. 0.94
+  -2  {realpad;<debuff_titan2[|strat]>;25} titan 2 curse mod, e.g. 1.0
+  -3  {realpad;<debuff_titan3[|strat]>;25} titan 3 curse mod, e.g. 0.88
+
+Defaults:
+- d will default to last known input or error
+- m will default to last known input or minimum for raid tier
+- 1,2,3 will default to 1.0
+
+Related commands:
+{realpad;{prefix}seed;20} to set seed data based on gh posts
+{realpad;{prefix}summary;20} to print out cycle phases prediction
+```
+}{return}}
+
+{set; ~iscacheexpired; {bool;!=; {time;YYYYWW}; {get; _raidpreviewlastrun}}} {//; if cached data is on different week}
+
+{set; ~error;}
+{if; {flagset;r}; {set; ~raidtierzone; {flag; r}}; {set; ~error; {get; ~error}{newline}r parameter required } }
+{set; ~seedtierzone; {jget;_seed;{get; ~raidtierzone}}}
+
+{set; _cache; {if; {get; ~iscacheexpired}; {j;{
+  {get; ~raidtierzone}: {
+    "flagb":"non",
+    "flag1":1.0,
+    "flag2":1.0,
+    "flag3":1.0
+  }
+}}; {get; _cache}} }
+
+{if; {flagset;d}; 
+  {set; _raidunbuffedavg; {flag; d}}
+; 
+  {if; {get; ~iscacheexpired}; 
+    {set; ~error; {get; ~error}{newline}d parameter required }
+  }
+}
+
+{if; {length; {get; ~error}}; >; 0; {output;Error:{get; ~error}}{return}}
+
+{//; translate spawn_sequence into legacy flag s}
+{set; ~enemynames; {jget;~seedtierzone;enemy_names}}
+{set; ~spawnsequence; {jget;~seedtierzone;spawn_sequence}}
+{set; ~seedsequence; []}
+{foreach;~elem;~spawnsequence;
+  {push;~seedsequence;{math;+;1;{indexof;{get;~enemynames};{get;~elem}}}}
+}
+{set; ~titansequence; {join;~seedsequence;}}
+{jset; _cache; {get; ~raidtierzone}.flags; {get;~titansequence}; create}
+
+{set; _raidpreviewlastrun; {time;YYYYWW}}
+
+{//; TODO: retrieve data from seed for buff, debuff, sequence, [titan base hp, titan part hp]}
+
+{set; ~raidbuff; {jget;~seedtierzone;area_buffs.0}}
+{jset; _cache ; {get; ~raidtierzone}.flagb; {get;~raidbuff}; create}
+
+{//; TODO: combine below loop into the main loop further below?}
+
+{for;~index;1;<;4;
+  {set; ~raidtitan{get;~index}name; {jget;~enemynames;{math;-;{get;~index};1}} }
+  {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.name; {get;~raidtitan{get;~index}name}; create}
+  
+  {set; ~raidtitan{get;~index}; {jget; ~seedtierzone; {get; ~raidtitan{get;~index}name}.area_debuffs.0} }
+  {set; ~raidtitanparts{get;~index}; {jget; ~seedtierzone; {get; ~raidtitan{get;~index}name}.parts} }
+  {set; ~raidtitancurse{get;~index}; {jget; ~seedtierzone; {get; ~raidtitan{get;~index}name}.cursed_debuffs.0} }
+  {jset; _cache ; {get; ~raidtierzone}.flag{get;~index}; {get;~raidtitan{get;~index}}; create}
+  {//; jset; _cache ; {get; ~raidtierzone}.parts{get;~index}; {get;~raidtitanparts{get;~index}}; create}
+  {jset; _cache ; {get; ~raidtierzone}.curse{get;~index}; {get;~raidtitancurse{get;~index}}; create}
+  
+  {set; ~raidtitancurseparts{get;~index}; []}
+  {foreach;~elem;~raidtitanparts{get;~index};
+    {if;{jget;~elem;cursed}; {push;~raidtitancurseparts{get;~index};{jget;_raiddata;Parts.{jget;~elem;part_id}}} ;}
+  }
+  {sort; ~raidtitancurseparts{get;~index}}
+  {jset; _cache ; {get; ~raidtierzone}.curse{get;~index}.parts; {get;~raidtitancurseparts{get;~index}}; create}
+}
+
+{set; ~raidtier; {shift; {split; {get; ~raidtierzone}; -}}}
+{if; {get; ~raidtier}; ==; 4; 
+  {set; ~hitspercycle; 5}
+; 
+  {set; ~hitspercycle; 4}
+}
+
+{set; _membercount; {if; {flagset; p}; 
+  {flag; p}
+; 
+  {if; {get; ~iscacheexpired}; 
+    50
+  ;
+    {get; _membercount}
+  }
+}}
+
+{set; _raidmorale; {if; {flagset; m}; 
+  {flag; m}
+; 
+  {if; {get; ~iscacheexpired}; 
+    {switch; {get; ~raidtier};
+      4; 15;
+      3; 10;
+      2; 5;
+      1; 0;
+    }
+  ;
+    {get; _raidmorale}
+  }
+}}
+
+{//; get buff text}
+{set; ~raidbuffindex; {shift;{filter;~element;{jkeys;_raiddata;Buffs};{bool;{get;~element};contains;|{jget; ~raidbuff;BonusType}|}}} }
+{set; ~raidbuffacro; {shift;{split;{get;~raidbuffindex};|}} }
+{set; ~raidbufftext; {pop;{split;{get;~raidbuffindex};|}} }
+{set; ~raidbufftab; {jget; _raiddata; Buffs.{get;~raidbuffindex}} }
+{jset; _cache ; {get; ~raidtierzone}.computed.buff.index; {get;~raidbuffindex}; create}
+{jset; _cache ; {get; ~raidtierzone}.computed.buff.text; {get;~raidbufftext}; create}
+{jset; _cache ; {get; ~raidtierzone}.computed.buff.tab; {get;~raidbufftab}; create}
+
+{//; output; {jclean;{get; _cache}}}{//return}
+
+{//; get seed and titan name}
+{set; ~raidtierzonedata; {jget;_raiddata;Seeds.{get; ~raidtierzone}} }
+{set; ~raidbasehp; {jget;~raidtierzonedata;BaseHP}}
+{jset; _cache ; {get; ~raidtierzone}.computed.basehp; {parseint;{get;~raidbasehp}}; create}
+{for;~index;1;<;4;
+  {set; ~enemyid; {jget;~raidtierzonedata;Titan{get;~index}} }
+  
+  {//; get each titan name}
+  {set; ~raidtitan{get;~index}name; {jget;_raiddata;Enemies.Enemy{get; ~enemyid}} }
+  {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.name; {get;~raidtitan{get;~index}name}; create}
+  
+  // get each titan hp
+  {set; ~raidenemy{get;~enemyid}hp; 0}
+  {set; ~raidenemy{get;~enemyid}hptab; {jget;_raiddata;HPs.Enemy{get;~enemyid}} }
+  
+  {//; split debuff [acro|titans strat], if | doesn't exists load default strat}
+  {if;{bool;>;{indexof;{get; ~raidtitan{get;~index}};|};-1};
+    {set; ~raidtitan{get;~index}strat; {pop;{split;{get;~raidtitan{get;~index}};|}} }
+    {set; ~raiddebuff{get;~index}acro; {shift;{split;{get;~raidtitan{get;~index}};|}} }
+  ;
+    {set; ~raidtitan{get;~index}strat; {jget;_raiddata;DefaultStrategy.Enemy{get;~enemyid}} }
+    {set; ~raiddebuff{get;~index}acro; {get;~raidtitan{get;~index}} }
+  }
+  {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.strat; {get;~raidtitan{get;~index}strat}; create}
+  
+  {//; get debuff text}
+  {set; ~raiddebuff{get;~index}index; {shift;{filter;~element;{jkeys;_raiddata;Debuffs };{bool;{get;~element};startswith;{get; ~raiddebuff{get;~index}acro}|}}} }
+  {set; ~raiddebuff{get;~index}text; {pop;{split;{get;~raiddebuff{get;~index}index};|}} }
+  {set; ~raiddebuff{get;~index}tab; {jget; _raiddata; Debuffs.{get;~raiddebuff{get;~index}index}} }
+  {jset; _cache; {get; ~raidtierzone}.computed.debuff{get;~index}.text; {get;~raiddebuff{get;~index}text}; create}
+  {jset; _cache; {get; ~raidtierzone}.computed.debuff{get;~index}.tab; {get;~raiddebuff{get;~index}tab}; create}
+  
+  {//; init for titanhp & mod}
+  {set; ~raidenemy{get;~enemyid}hp; {get; ~raidbasehp}}
+  {set; ~raidenemy{get;~enemyid}hpprcnt; {parsefloat; 0}}
+  {set; ~raidenemy{get;~enemyid}hpprcntb; {parsefloat; 0}}
+  {set; ~raidenemy{get;~enemyid}modbase; {jget;_raiddata;HPStandard.Enemy{get;~enemyid}.TotalHPPercent} }
+  {set; ~raidenemy{get;~enemyid}mod; {parsefloat; 0}}
+  
+  {for;~partid;2;<;10;
+    {//; get body part %}
+    {set; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}b; {math; *; 
+      {jget; ~raidenemy{get; ~enemyid}hptab; {get; ~partid}b};
+      {parsefloat; {jget; ~raiddebuff{get;~index}tab; {get; ~partid}bh}};
+      {parsefloat;
+        {substring;
+          {get; ~raidtitan{get;~index}strat};
+          {math;-;{get; ~partid}; 2};
+          {math;-;{get; ~partid}; 1}
+        }
+      }
+    }}
+    {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.partb.{get;~partid}; {parsefloat;{get;~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}b}}; create}
+    {//; get armor part %}
+    {set; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}a; {math; *; 
+      {jget; ~raidenemy{get; ~enemyid}hptab; {get; ~partid}a};
+      {parsefloat; {jget; ~raiddebuff{get;~index}tab; {get; ~partid}ah}};
+      {parsefloat;
+        {substring;
+          {get; ~raidtitan{get;~index}strat};
+          {math;-;{get; ~partid}; 2};
+          {math;-;{get; ~partid}; 1}
+        }
+      }
+    }}
+    {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.parta.{get;~partid}; {parsefloat;{get; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}a}}; create}
+    
+    {//; increment total hp}
+    {increment; ~raidenemy{get; ~enemyid}hp; {math;*; 
+      {get; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}a}; 
+      {parsefloat; {get; ~raidbasehp}}
+    }}
+    
+    {//; increment hp prcnt body, to check if titan will die basedon strategy}
+    {increment; ~raidenemy{get; ~enemyid}hpprcntb; {get; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}b}; false}
+    
+    {//; increment total hp %}
+    {increment; ~raidenemy{get; ~enemyid}hpprcnt; {math;+; 
+      {get; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}b}; 
+      {get; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}a} 
+    }; false}
+    
+    {//; get mod from buff and debuff combo for parts, refer to sheet `TitanModCalculator` for clearer view }
+    {set; ~raidbuffdebuff{get;~partid}modb; {math;+;
+      {parsefloat; {jget; ~raidbufftab; {get;~partid}bd}};
+      {parsefloat; {jget; ~raiddebuff{get;~index}tab; {get;~partid}bd}};
+      -2
+    }}
+    {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.modb.{get;~partid}; {parseint;{get;~raidbuffdebuff{get;~partid}modb}}; create}
+    {set; ~raidbuffdebuff{get;~partid}moda; {math;+;
+      {parsefloat; {jget; ~raidbufftab; {get;~partid}ad}};
+      {parsefloat; {jget; ~raiddebuff{get;~index}tab; {get;~partid}ad}};
+      -2
+    }}
+    {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.moda.{get;~partid}; {parseint;{get;~raidbuffdebuff{get;~partid}moda}}; create}
+    {increment; ~raidenemy{get;~enemyid}mod; {math;+;
+      {math;*;
+        {get; ~raidbuffdebuff{get;~partid}modb};
+        {get; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}b}
+      };
+      {math;*;
+        {get; ~raidbuffdebuff{get;~partid}moda};
+        {get; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}a}
+      }
+    }; false}
+  }{//; end of parts loop}
+  
+  {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.tempmod; {parseint;{get;~raidenemy{get;~enemyid}mod}}; create}
+  {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.hp; {parseint;{get;~raidenemy{get; ~enemyid}hp}}; create}
+  {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.hpprcnt; {parsefloat;{get;~raidenemy{get; ~enemyid}hpprcnt}}; create}
+  {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.hpprcntb; {parsefloat;{get;~raidenemy{get; ~enemyid}hpprcntb}}; create}
+  {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.hpprcnta; {math;-;
+    {parsefloat;{get;~raidenemy{get; ~enemyid}hpprcnt}};
+    {parsefloat;{get;~raidenemy{get; ~enemyid}hpprcntb}}
+  }; create}
+  {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.hpprcnte; {math;+;
+    {parsefloat;{jget; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.hpprcnta}};
+    {parsefloat;1.0}
+  }; create}
+  
+  {set; ~raidenemy{get;~enemyid}finalmod; {math;+;
+    {parsefloat; {jget; ~raidbufftab; DamageMod}};
+    {parsefloat; {jget; ~raiddebuff{get;~index}tab; DamageMod}};
+    -2;
+    {math;/;
+      {math;+;
+        {get; ~raidenemy{get;~enemyid}mod};
+        {jget; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.hpprcnte}
+      };
+      {jget; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.hpprcnte}
+    }
+  }}
+  
+  {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.mod; {get;~raidenemy{get;~enemyid}finalmod}; create}
+  
+  {//; validate body HP, to make sure titan is dead with the strat}
+  {if; ~raidenemy{get; ~enemyid}hpprcntb; <; 1.0;
+    {//; unset computed value}
+    {jset; _cache; {get; ~raidtierzone}.computed}
+    {output; Error: {get;~raidtitan{get;~index}name} will not die with this strategy}
+  }
+  
+  {//; prep for summary}
+  
+  {//; get limbs}
+  {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.limbsprcntb; 
+    {math;+; 
+      {get; ~raidenemy{get; ~enemyid}hppartprcnt4b};
+      {get; ~raidenemy{get; ~enemyid}hppartprcnt5b};
+      {get; ~raidenemy{get; ~enemyid}hppartprcnt6b};
+      {get; ~raidenemy{get; ~enemyid}hppartprcnt7b};
+      {get; ~raidenemy{get; ~enemyid}hppartprcnt8b};
+      {get; ~raidenemy{get; ~enemyid}hppartprcnt9b}
+    }
+  ; create}
+  {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.limbsprcnta; 
+    {math;+; 
+      {get; ~raidenemy{get; ~enemyid}hppartprcnt4a};
+      {get; ~raidenemy{get; ~enemyid}hppartprcnt5a};
+      {get; ~raidenemy{get; ~enemyid}hppartprcnt6a};
+      {get; ~raidenemy{get; ~enemyid}hppartprcnt7a};
+      {get; ~raidenemy{get; ~enemyid}hppartprcnt8a};
+      {get; ~raidenemy{get; ~enemyid}hppartprcnt9a}
+    }
+  ; create}
+  
+  {//; find vm part}
+  {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.vm.hpprcntb; 
+    {max;{jvalues;_cache;{get; ~raidtierzone}.computed.titan{get;~index}.partb}}
+  ; create}
+  {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.vmpartid; 
+    {indexof; {concat;
+      ["0", "0"];
+      {jvalues; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.partb}
+    }; {jget;_cache;{get; ~raidtierzone}.computed.titan{get;~index}.vm.hpprcntb}}
+  ; create}
+  {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.vm.hpprcnta; 
+    {parsefloat;{get; ~raidenemy{get; ~enemyid}hppartprcnt{jget;_cache;{get; ~raidtierzone}.computed.titan{get;~index}.vmpartid}a}}
+  ; create}
+  
+  {//; init for loop below}
+  {set; ~raidtitan{get;~index}qty; 0 }
+}
+
+{//; get mod}
+{set; ~raidhpprcnt; 0}
+{set; ~raidmod; 0}
+{set; ~titansequence; {split; {get; ~titansequence};}}
+{for;~index;0;<;{length; {get; ~titansequence}};
+  {set; ~titanid; {jget;~titansequence;{get;~index}}}
+  {set; ~enemyid; {jget;~raidtierzonedata;Titan{get;~titanid}}}
+  {increment; ~raidtitan{get;~titanid}qty}
+  
+  {set; ~titaneffectivehp; {math;+; {jget; _cache; {get; ~raidtierzone}.computed.titan{get;~titanid}.hpprcnta}; {parsefloat; 1.0}}}
+  {increment; ~raidhpprcnt; {get; ~titaneffectivehp}; false}
+  {increment; ~raidmod; {math;*;
+    {get; ~titaneffectivehp};
+    {get; ~raidenemy{get;~enemyid}finalmod}
+  };false}
+}
+
+{set; ~raidmod; {math;/;
+  {get; ~raidmod};
+  {get; ~raidhpprcnt}
+}}
+{increment; ~raidmod; {math;/; {get; _raidmorale}; 100}; false}
+{jset; _cache ; {get; ~raidtierzone}.computed.raidmod; {get; ~raidmod}; create}
+
+{set; ~raiddamageneeded; {math;*; {get; ~raidhpprcnt}; {get; ~raidbasehp}}}
+{jset; _cache ; {get; ~raidtierzone}.computed.damageneeded; {parseint;{get; ~raiddamageneeded}}; create}
+
+{set; ~raidbuffedavg; {math;*; 
+  {get; ~raidmod}; 
+  {get; _raidunbuffedavg}
+}}
+{jset; _cache ; {get; ~raidtierzone}.computed.bavg; {get; ~raidbuffedavg}; create}
+
+{set; ~raidhits; {ceil; {math;/;
+  {get; ~raiddamageneeded};
+  {math;*;
+    {get; ~raidbuffedavg};
+    1000000
+  }
+}}}
+{jset; _cache ; {get; ~raidtierzone}.computed.raidhits; {parseint;{get; ~raidhits}}; create}
+
+{set; ~raidcyclefloored; {floor; {math;/;
+  {parseint; {get; ~raidhits}};
+  {math;*;
+    {parseint; {get; ~hitspercycle}};
+    {parseint; {get; _membercount}}
+  }
+}}}
+{set; ~raidtotalcycle; {ceil; {math;/;
+  {parseint; {get; ~raidhits}};
+  {math;*;
+    {parseint; {get; ~hitspercycle}};
+    {parseint; {get; _membercount}}
+  }
+}}}
+{jset; _cache ; {get; ~raidtierzone}.computed.totalcycle; {parseint;{get; ~raidtotalcycle}}; create}
+{set; ~killcyclehits; {math;-;
+  {parseint; {get; ~raidhits}};
+  {math;*;
+    {parseint; {get; ~raidcyclefloored}};
+    {parseint; {get; ~hitspercycle}};
+    {parseint; {get; _membercount}}
+  }
+}}
+{//; average needed to 6 cycle}
+{set; ~avgneeded; {math;/;
+  {parseint; {get;~raiddamageneeded}};
+  {math;*;
+    {parseint; {get; ~hitspercycle}};
+    {parseint; {get; _membercount}};
+    6
+  }
+}}
+
+{//; ---------------------------- all output below}
+
+{output;```Preview:{realpad;{get; ~raidtierzone};4} Mor:{realpad;{get; _raidmorale}%;5;{space};left} UAvg:{realpad;{numformat;{get; _raidunbuffedavg};2}M;6;{space};left}{for;~index;1;<;4;{ set; ~enemyid; {jget;~raidtierzonedata;Titan{get;~index}}}
+{realpad;{get; ~raidtitan{get;~index}name};7} x{get; ~raidtitan{get;~index}qty} -{realpad;{get; ~raiddebuff{get;~index}acro};6}{realpad;{numformat;{get; ~raidenemy{get;~enemyid}finalmod};2};5}HP{realpad;{numformat;{math;/;{get;~raidenemy{get;~enemyid}hp};1000000};2}M;9;{space};left}
+}
+{realpad;{get; ~raidcyclefloored}C+{get; ~killcyclehits}Hts;11}+{realpad;{get; ~raidbuffacro};6}{realpad;{numformat;{get; ~raidmod};2};5}BAvg:{realpad;{numformat;{get; ~raidbuffedavg};2}M;6;{space};left}
+{realpad;{get; _membercount};2}P MiDmg:{realpad;{numformat;{math;/;{get;~raiddamageneeded};1000000};2}M;10;{space};left} MiBAvg:{realpad;{numformat;{math;/;{get; ~avgneeded}; 1000000};2;;,}M;6;{space};left}```}

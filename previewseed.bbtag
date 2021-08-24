@@ -397,20 +397,21 @@ Related commands:
 
 {set; ~embed; {j;{}}}
 {jset; ~embed; title; Titan Curse List ;create}
-{jset; ~embed; description; (O)Normal (C)Cursed ;create}
+{jset; ~embed; description; (N)Normal (C)Cursed ;create}
 {set; ~embedfields; []}
 {for;~index;1;<;4;
   {set; ~enemyid; {jget;~raidtierzonedata;Titan{get;~index}} }
   {set; ~embedfield; {j;{}}}
-  {set; ~curseparts; {split;OOOOOOOO;}}
+  {set; ~curseparts; {split;NNNNNNNN;}}
   {foreach; ~elem; {jget; _cache; {get; ~raidtierzone}.curse{get;~index}.parts};
     {jset;~curseparts;
       {math;-;{parseint;{shift;{split;{get;~elem};}}};2}
     ;C}
   }
+  {set; ~cursename; {math;*;100;{parsefloat;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.BonusAmount}}}% {switch;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.BonusType};AfflictedDamagePerCursed;Affl. Damage;BurstDamagePerCursed;Burst Damage}}
   
   {jset; ~embedfield; name; {get; ~raidtitan{get;~index}name} ;create}
-  {jset; ~embedfield; value; {jget; _cache; {get; ~raidtierzone}.curse{get;~index}.BonusAmount} {jget; _cache; {get; ~raidtierzone}.curse{get;~index}.BonusType}{newline}{jget;~curseparts;2} {jget;~curseparts;0} {jget;~curseparts;7}{newline}{jget;~curseparts;3} {jget;~curseparts;1} {jget;~curseparts;6}{newline}   {jget;~curseparts;4} {jget;~curseparts;5} ;create}
+  {jset; ~embedfield; value; {get;~cursename}{newline}{jget;~curseparts;2} {jget;~curseparts;0} {jget;~curseparts;7}{newline}{jget;~curseparts;3} {jget;~curseparts;1} {jget;~curseparts;6}{newline}   {jget;~curseparts;4} {jget;~curseparts;5} ;create}
   {jset; ~embedfield; inline; true ;create}
   {push; ~embedfields; {get; ~embedfield}}
 }

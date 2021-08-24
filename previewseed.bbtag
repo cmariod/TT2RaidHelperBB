@@ -395,8 +395,31 @@ Related commands:
 
 {//; ---------------------------- all output below}
 
+{set; ~embed; {j;{}}}
+{jset; ~embed; title; Titan Curse List ;create}
+{jset; ~embed; description; (O)Normal (C)Cursed ;create}
+{set; ~embedfields; []}
+{for;~index;1;<;4;
+  {set; ~enemyid; {jget;~raidtierzonedata;Titan{get;~index}} }
+  {set; ~embedfield; {j;{}}}
+  {set; ~curseparts; {split;OOOOOOOO;}}
+  {foreach; ~elem; {jget; _cache; {get; ~raidtierzone}.curse{get;~index}.parts};
+    {jset;~curseparts;
+      {math;-;{parseint;{shift;{split;{get;~elem};}}};2}
+    ;C}
+  }
+  
+  {jset; ~embedfield; name; {get; ~raidtitan{get;~index}name} ;create}
+  {jset; ~embedfield; value; {jget; _cache; {get; ~raidtierzone}.curse{get;~index}.BonusAmount} {jget; _cache; {get; ~raidtierzone}.curse{get;~index}.BonusType}{newline}{jget;~curseparts;2} {jget;~curseparts;0} {jget;~curseparts;7}{newline}{jget;~curseparts;3} {jget;~curseparts;1} {jget;~curseparts;6}{newline}   {jget;~curseparts;4} {jget;~curseparts;5} ;create}
+  {jset; ~embedfield; inline; true ;create}
+  {push; ~embedfields; {get; ~embedfield}}
+}
+{jset; ~embed; fields; {get; ~embedfields} ;create}
+
 {output;```Preview:{realpad;{get; ~raidtierzone};4} Mor:{realpad;{get; _raidmorale}%;5;{space};left} UAvg:{realpad;{numformat;{get; _raidunbuffedavg};2}M;6;{space};left}{for;~index;1;<;4;{ set; ~enemyid; {jget;~raidtierzonedata;Titan{get;~index}}}
 {realpad;{get; ~raidtitan{get;~index}name};7} x{get; ~raidtitan{get;~index}qty} -{realpad;{get; ~raiddebuff{get;~index}acro};6}{realpad;{numformat;{get; ~raidenemy{get;~enemyid}finalmod};2};5}HP{realpad;{numformat;{math;/;{get;~raidenemy{get;~enemyid}hp};1000000};2}M;9;{space};left}
 }
 {realpad;{get; ~raidcyclefloored}C+{get; ~killcyclehits}Hts;11}+{realpad;{get; ~raidbuffacro};6}{realpad;{numformat;{get; ~raidmod};2};5}BAvg:{realpad;{numformat;{get; ~raidbuffedavg};2}M;6;{space};left}
-{realpad;{get; _membercount};2}P MiDmg:{realpad;{numformat;{math;/;{get;~raiddamageneeded};1000000};2}M;10;{space};left} MiBAvg:{realpad;{numformat;{math;/;{get; ~avgneeded}; 1000000};2;;,}M;6;{space};left}```}
+{realpad;{get; _membercount};2}P MiDmg:{realpad;{numformat;{math;/;{get;~raiddamageneeded};1000000};2}M;10;{space};left} MiBAvg:{realpad;{numformat;{math;/;{get; ~avgneeded}; 1000000};2;;,}M;6;{space};left}```
+{embed;{jclean;{get; ~embed}}}
+}

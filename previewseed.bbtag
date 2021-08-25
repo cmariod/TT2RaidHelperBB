@@ -1,4 +1,5 @@
 {execcc;haspermissions}
+{execcc;lib}
 
 { if; { flagset; t }; {output; ```{prefix}{commandname} -r 3-60 -d 7.5 -m 15.5 -1 0.94 -2 1.0 -3 0.88 -p 50```
 }{return}}
@@ -65,31 +66,8 @@ Related commands:
 
 {set; _raidpreviewlastrun; {time;YYYYWW}}
 
-{//; TODO: retrieve data from seed for buff, debuff, sequence, [titan base hp, titan part hp]}
-
 {set; ~raidbuff; {jget;~seedtierzone;area_buffs.0}}
 {jset; _cache ; {get; ~raidtierzone}.flagb; {get;~raidbuff}; create}
-
-{//; TODO: combine below loop into the main loop further below?}
-
-{for;~index;1;<;4;
-  {set; ~raidtitan{get;~index}name; {jget;~enemynames;{math;-;{get;~index};1}} }
-  {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.name; {get;~raidtitan{get;~index}name}; create}
-  
-  {set; ~raidtitan{get;~index}; {jget; ~seedtierzone; {get; ~raidtitan{get;~index}name}.area_debuffs.0} }
-  {set; ~raidtitanparts{get;~index}; {jget; ~seedtierzone; {get; ~raidtitan{get;~index}name}.parts} }
-  {set; ~raidtitancurse{get;~index}; {jget; ~seedtierzone; {get; ~raidtitan{get;~index}name}.cursed_debuffs.0} }
-  {jset; _cache ; {get; ~raidtierzone}.flag{get;~index}; {get;~raidtitan{get;~index}}; create}
-  {//; jset; _cache ; {get; ~raidtierzone}.parts{get;~index}; {get;~raidtitanparts{get;~index}}; create}
-  {jset; _cache ; {get; ~raidtierzone}.curse{get;~index}; {get;~raidtitancurse{get;~index}}; create}
-  
-  {set; ~raidtitancurseparts{get;~index}; []}
-  {foreach;~elem;~raidtitanparts{get;~index};
-    {if;{jget;~elem;cursed}; {push;~raidtitancurseparts{get;~index};{jget;_raiddata;Parts.{jget;~elem;part_id}}} ;}
-  }
-  {sort; ~raidtitancurseparts{get;~index}}
-  {jset; _cache ; {get; ~raidtierzone}.curse{get;~index}.parts; {get;~raidtitancurseparts{get;~index}}; create}
-}
 
 {set; ~raidtier; {shift; {split; {get; ~raidtierzone}; -}}}
 {if; {get; ~raidtier}; ==; 4; 
@@ -126,40 +104,56 @@ Related commands:
 {//; get buff text}
 {set; ~raidbuffindex; {shift;{filter;~element;{jkeys;_raiddata;Buffs};{bool;{get;~element};contains;|{jget; ~raidbuff;BonusType}|}}} }
 {set; ~raidbuffacro; {shift;{split;{get;~raidbuffindex};|}} }
-{set; ~raidbufftext; {pop;{split;{get;~raidbuffindex};|}} }
+{set; ~raidbufftext; {func.buffformat;{get; ~raidbuff}} }
 {set; ~raidbufftab; {jget; _raiddata; Buffs.{get;~raidbuffindex}} }
 {jset; _cache ; {get; ~raidtierzone}.computed.buff.index; {get;~raidbuffindex}; create}
 {jset; _cache ; {get; ~raidtierzone}.computed.buff.text; {get;~raidbufftext}; create}
 {jset; _cache ; {get; ~raidtierzone}.computed.buff.tab; {get;~raidbufftab}; create}
 
-{//; output; {jclean;{get; _cache}}}{//return}
-
 {//; get seed and titan name}
 {set; ~raidtierzonedata; {jget;_raiddata;Seeds.{get; ~raidtierzone}} }
-{set; ~raidbasehp; {jget;~raidtierzonedata;BaseHP}}
+{set; ~raidbasehp; {jget;~raidtierzonedata;BaseHP}}{//; TODO: load from first titan}
 {jset; _cache ; {get; ~raidtierzone}.computed.basehp; {parseint;{get;~raidbasehp}}; create}
 {for;~index;1;<;4;
   {set; ~enemyid; {jget;~raidtierzonedata;Titan{get;~index}} }
   
+  {set; ~raidtitan{get;~index}name; {jget;~enemynames;{math;-;{get;~index};1}} }
+  {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.name; {get;~raidtitan{get;~index}name}; create}
+  
+  {set; ~raidtitan{get;~index}; {jget; ~seedtierzone; {get; ~raidtitan{get;~index}name}.area_debuffs.0} }
+  {set; ~raidtitanparts{get;~index}; {jget; ~seedtierzone; {get; ~raidtitan{get;~index}name}.parts} }
+  {set; ~raidtitancurse{get;~index}; {jget; ~seedtierzone; {get; ~raidtitan{get;~index}name}.cursed_debuffs.0} }
+  {jset; _cache ; {get; ~raidtierzone}.flag{get;~index}; {get;~raidtitan{get;~index}}; create}
+  {//; jset; _cache ; {get; ~raidtierzone}.parts{get;~index}; {get;~raidtitanparts{get;~index}}; create}
+  {jset; _cache ; {get; ~raidtierzone}.curse{get;~index}; {get;~raidtitancurse{get;~index}}; create}
+  
+  {set; ~raidtitancurseparts{get;~index}; []}
+  {foreach;~elem;~raidtitanparts{get;~index};
+    {if;{jget;~elem;cursed}; {push;~raidtitancurseparts{get;~index};{jget;_raiddata;Parts.{jget;~elem;part_id}}} ;}
+  }
+  {sort; ~raidtitancurseparts{get;~index}}
+  {jset; _cache ; {get; ~raidtierzone}.curse{get;~index}.parts; {get;~raidtitancurseparts{get;~index}}; create}
+  
   {//; get each titan name}
-  {set; ~raidtitan{get;~index}name; {jget;_raiddata;Enemies.Enemy{get; ~enemyid}} }
+  {set; ~raidtitan{get;~index}name; {jget;_raiddata;Enemies.Enemy{get; ~enemyid}} }{//; TODO: get from seed}
   {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.name; {get;~raidtitan{get;~index}name}; create}
   
   // get each titan hp
   {set; ~raidenemy{get;~enemyid}hp; 0}
-  {set; ~raidenemy{get;~enemyid}hptab; {jget;_raiddata;HPs.Enemy{get;~enemyid}} }
+  {//; TODO: get each titan base hp}
+  {set; ~raidenemy{get;~enemyid}hptab; {jget;_raiddata;HPs.Enemy{get;~enemyid}} }{//; TODO: load hp from seed, and divide it with base hp}
   
-  {//; split debuff [acro|titans strat], if | doesn't exists load default strat}
+  {//; split debuff [acro|titans strat], if | doesn't exists load default strat} {//; TODO: rework this whole chunk, for HPMult set all HP to 1 as total_hp already loading from seed which already multiplied}
   {if;{bool;>;{indexof;{get; ~raidtitan{get;~index}};|};-1};
-    {set; ~raidtitan{get;~index}strat; {pop;{split;{get;~raidtitan{get;~index}};|}} }
-    {set; ~raiddebuff{get;~index}acro; {shift;{split;{get;~raidtitan{get;~index}};|}} }
+    {set; ~raidtitan{get;~index}strat; {pop;{split;{get;~raidtitan{get;~index}};|}} }{//; TODO: get from _strat}
+    {set; ~raiddebuff{get;~index}acro; {shift;{split;{get;~raidtitan{get;~index}};|}} }{//; TODO: can skip acro or follow buff logic}
   ;
     {set; ~raidtitan{get;~index}strat; {jget;_raiddata;DefaultStrategy.Enemy{get;~enemyid}} }
     {set; ~raiddebuff{get;~index}acro; {get;~raidtitan{get;~index}} }
   }
   {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.strat; {get;~raidtitan{get;~index}strat}; create}
   
-  {//; get debuff text}
+  {//; get debuff text}{//; TODO: follow buff logic}
   {set; ~raiddebuff{get;~index}index; {shift;{filter;~element;{jkeys;_raiddata;Debuffs };{bool;{get;~element};startswith;{get; ~raiddebuff{get;~index}acro}|}}} }
   {set; ~raiddebuff{get;~index}text; {pop;{split;{get;~raiddebuff{get;~index}index};|}} }
   {set; ~raiddebuff{get;~index}tab; {jget; _raiddata; Debuffs.{get;~raiddebuff{get;~index}index}} }
@@ -170,7 +164,7 @@ Related commands:
   {set; ~raidenemy{get;~enemyid}hp; {get; ~raidbasehp}}
   {set; ~raidenemy{get;~enemyid}hpprcnt; {parsefloat; 0}}
   {set; ~raidenemy{get;~enemyid}hpprcntb; {parsefloat; 0}}
-  {set; ~raidenemy{get;~enemyid}modbase; {jget;_raiddata;HPStandard.Enemy{get;~enemyid}.TotalHPPercent} }
+  {//; TODO: TBR set; ~raidenemy{get;~enemyid}modbase; {jget;_raiddata;HPStandard.Enemy{get;~enemyid}.TotalHPPercent} }
   {set; ~raidenemy{get;~enemyid}mod; {parsefloat; 0}}
   
   {for;~partid;2;<;10;
@@ -395,10 +389,44 @@ Related commands:
 
 {//; ---------------------------- all output below}
 
+{set;~idx;0}
 {set; ~embed; {j;{}}}
-{jset; ~embed; title; Titan Curse List ;create}
-{jset; ~embed; description; (N)Normal (C)Cursed ;create}
+{jset; ~embed; title; Preview: {get; ~raidtierzone} ({get; _membercount}:bust_in_silhouette: ) ;create}
+{jset; ~embed; description; Buff: {func.buffformat;{get; ~raidbuff}}{newline}Sequence: {join;{map;~item;{get; ~spawnsequence};{increment;~idx}{func.titanemoji;{get;~item}}}; } ;create}
+{jset; ~embed; color; {switch;{get;~raidtier};1;16777215;2;255;3;10845184;4;6697881} ;create}
+{jset; ~embed; footer.text; (N)Normal (C)Cursed | (O)Hit (X)Avoid ;create}
 {set; ~embedfields; []}
+
+{set; ~embedfield; {j;{}}}
+{jset; ~embedfield; name; **Input** ;create}
+{jset; ~embedfield; value; {clean;
+  Morale: {get; _raidmorale}%
+  Unbuffed Avg: {numformat;{get; _raidunbuffedavg};2}M
+  CurseMod: (1)1.0 (2)1.0 (3)1.0
+};create}
+{jset; ~embedfield; inline; true ;create}
+{push; ~embedfields; {get; ~embedfield}}
+
+{set; ~embedfield; {j;{}}}
+{jset; ~embedfield; name; **Raid Stats** ;create}
+{jset; ~embedfield; value; {clean;
+  Total HP: {numformat;{math;/;{get;~raiddamageneeded};1000000};2}M
+  Min Buffed Avg: {numformat;{math;/;{get; ~avgneeded}; 1000000};2;;,}M
+};create}
+{jset; ~embedfield; inline; true ;create}
+{push; ~embedfields; {get; ~embedfield}}
+
+{set; ~embedfield; {j;{}}}
+{jset; ~embedfield; name; **Predictions** ;create}
+{jset; ~embedfield; value; {clean;
+  Cycles: {get;~raidtotalcycle}
+  Kill Cycle Hits: {get;~killcyclehits}
+  Raid Mod: {get; ~raidmod}
+  Buffed Avg: {numformat;{get; ~raidbuffedavg};2}M
+};create}
+{jset; ~embedfield; inline; true ;create}
+{push; ~embedfields; {get; ~embedfield}}
+
 {for;~index;1;<;4;
   {set; ~enemyid; {jget;~raidtierzonedata;Titan{get;~index}} }
   {set; ~embedfield; {j;{}}}
@@ -408,19 +436,33 @@ Related commands:
       {math;-;{parseint;{shift;{split;{get;~elem};}}};2}
     ;C}
   }
-  {set; ~cursename; {math;*;100;{parsefloat;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.BonusAmount}}}% {switch;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.BonusType};AfflictedDamagePerCursed;Affl. Damage;BurstDamagePerCursed;Burst Damage}}
+  {set; ~cursename; {func.curseformat;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}}}}
+  {set; ~titanstrategy; {split;{regexreplace;{regexreplace;{jget;_strat;Enemy{get; ~enemyid}};/1/gi;O};/0/gi;X};}}
   
-  {jset; ~embedfield; name; {get; ~raidtitan{get;~index}name} ;create}
-  {jset; ~embedfield; value; {get;~cursename}{newline}{jget;~curseparts;2} {jget;~curseparts;0} {jget;~curseparts;7}{newline}{jget;~curseparts;3} {jget;~curseparts;1} {jget;~curseparts;6}{newline}   {jget;~curseparts;4} {jget;~curseparts;5} ;create}
+  {jset; ~embedfield; name; {func.titanemoji;{get;~enemyid}} **{get; ~raidtitan{get;~index}name} x{get; ~raidtitan{get;~index}qty}** ;create}
+  {jset; ~embedfield; value; {clean;
+    HP: {realpad;{numformat;{math;/;{get;~raidenemy{get;~enemyid}hp};1000000};2}M;9;{space};left}
+    Debuff: {func.debuffformat;{get; ~raiddebuff{get;~index}acro}}
+    TitanMod: {numformat;{get; ~raidenemy{get;~enemyid}finalmod};2}
+    }{if;{length;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.parts}};>;0;{if;{flagset;s};{newline}Curse: {func.truncaffl;{shift;{match;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.BonusType};/[A-Z]+[a-z]+/g}}} ({join;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.parts};,});{clean;
+      {newline}Curse (x{length;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.parts}}): {get;~cursename}
+      }{newline}**Curse**
+{jget;~curseparts;2} {jget;~curseparts;0} {jget;~curseparts;7}
+{jget;~curseparts;3} {jget;~curseparts;1} {jget;~curseparts;6}
+   {jget;~curseparts;4} {jget;~curseparts;5}
+**Strategy**
+{jget;~titanstrategy;2} {jget;~titanstrategy;0} {jget;~titanstrategy;7}
+{jget;~titanstrategy;3} {jget;~titanstrategy;1} {jget;~titanstrategy;6}
+   {jget;~titanstrategy;4} {jget;~titanstrategy;5}
+    };{newline}**Strategy**
+{jget;~titanstrategy;2} {jget;~titanstrategy;0} {jget;~titanstrategy;7}
+{jget;~titanstrategy;3} {jget;~titanstrategy;1} {jget;~titanstrategy;6}
+   {jget;~titanstrategy;4} {jget;~titanstrategy;5}
+    }
+  ;create}
   {jset; ~embedfield; inline; true ;create}
   {push; ~embedfields; {get; ~embedfield}}
 }
 {jset; ~embed; fields; {get; ~embedfields} ;create}
 
-{output;```Preview:{realpad;{get; ~raidtierzone};4} Mor:{realpad;{get; _raidmorale}%;5;{space};left} UAvg:{realpad;{numformat;{get; _raidunbuffedavg};2}M;6;{space};left}{for;~index;1;<;4;{ set; ~enemyid; {jget;~raidtierzonedata;Titan{get;~index}}}
-{realpad;{get; ~raidtitan{get;~index}name};7} x{get; ~raidtitan{get;~index}qty} -{realpad;{get; ~raiddebuff{get;~index}acro};6}{realpad;{numformat;{get; ~raidenemy{get;~enemyid}finalmod};2};5}HP{realpad;{numformat;{math;/;{get;~raidenemy{get;~enemyid}hp};1000000};2}M;9;{space};left}
-}
-{realpad;{get; ~raidcyclefloored}C+{get; ~killcyclehits}Hts;11}+{realpad;{get; ~raidbuffacro};6}{realpad;{numformat;{get; ~raidmod};2};5}BAvg:{realpad;{numformat;{get; ~raidbuffedavg};2}M;6;{space};left}
-{realpad;{get; _membercount};2}P MiDmg:{realpad;{numformat;{math;/;{get;~raiddamageneeded};1000000};2}M;10;{space};left} MiBAvg:{realpad;{numformat;{math;/;{get; ~avgneeded}; 1000000};2;;,}M;6;{space};left}```
-{embed;{jclean;{get; ~embed}}}
-}
+{output;{embed;{jclean;{get; ~embed}}}}

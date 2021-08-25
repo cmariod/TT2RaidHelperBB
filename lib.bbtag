@@ -1,0 +1,37 @@
+{if;{commandname};==;lib;{return}}
+
+{func;truncate;{clean;
+  {if;{length;{params;0}};>;{params;1};{substring;{params;0};0;{math;-;{params;1};1}}.;{params;0}}
+}}
+
+{func;truncaffl;{clean;
+  {if;{params;0};startswith;Afflict;Affl.;{params;0}}
+}}
+
+{func;buffformat;{clean;
+  {set;~percent;{func.topercent;{jget; {params;0}; BonusAmount}}}{switch;{jget; {params;0}; BonusType};
+    RaidAttackDuration;
+      +{jget; {params;0}; BonusAmount}s {func.camelcasespacer;{jget; {params;0}; BonusType}};
+    +{if;{get;~percent};>=;100.0;{math;-;{get;~percent};100};{get;~percent}}% {func.camelcasespacer;{jget; {params;0}; BonusType}}
+  }
+}}
+
+{func;debuffformat;{clean;
+  {set;~percent;{func.topercent;{jget; {params;0}; BonusAmount}}}{if;{jget; {params;0}; BonusType};endswith;HPMult;+{get;~percent};{if;{get;~percent};>;0;{math;-;{get;~percent};100};{get;~percent}}}% {func.camelcasespacer;{jget; {params;0}; BonusType}}
+}}
+
+{func;curseformat;{clean;
+  {set;~match;{match;{jget; {params;0}; BonusType};/[A-Z]+[a-z]+/g}}{set;~length;{length;{get;~match}}}{func.topercent;{jget; {params;0}; BonusAmount}}% {join;{map;~item;{get;~match};{func.truncaffl;{get;~item};5}};{space}}
+}}
+
+{func;camelcasespacer;{clean;
+  {join;{match;{params;0};/[A-Z]+[a-z]+/g};{space}}
+}}
+
+{func;topercent;{clean;
+  {math;*;100;{parsefloat;{params;0}}}
+}}
+
+{func;titanemoji;{switch;{lower;{params;0}};["1","lojak"];<:Lojak:880048138881204244>;["2","takedar"];<:Takedar:880048138415652874>;["3","jukk"];<:Jukk:880048138600202241>;["4","sterl"];<:Sterl:880048138973499392>;["5","mohaca"];<:Mohaca:880048138965102622>;["6","terro"];<:Terro:880048140135325717>}}
+
+{func;jfilterkeys;{set;~filteredkeys;{filter;~element;{jkeys;{params;0}};{bool;{get;~element};{params;1};{params;2}}}}{set;~returnjson;{j;{}}}{foreach;~elem;{get;~filteredkeys};{jset;~returnjson;{get;~elem};{jget;{params;0};{get;~elem}};create}}{get;~returnjson}}

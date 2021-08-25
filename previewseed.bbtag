@@ -35,12 +35,15 @@ Related commands:
 {if; {flagset;r}; {set; ~raidtierzone; {flag; r}}; {set; ~error; {get; ~error}{newline}r parameter required } }
 {set; ~seedtierzone; {jget;_seed;{get; ~raidtierzone}}}
 
-{set; _cache; {if; {get; ~iscacheexpired}; {j;{
-  {get; ~raidtierzone}: {
+{set; _cache; {if; {get; ~iscacheexpired}; {jset;{j;{}};{get; ~raidtierzone};{j;
+  {
     "flagb":"non",
-    "flag1":1.0,
-    "flag2":1.0,
-    "flag3":1.0
+    "flag1":"non",
+    "flag2":"non",
+    "flag3":"non",
+    "flagcurse1":1.0,
+    "flagcurse2":1.0,
+    "flagcurse3":1.0
   }
 }}; {get; _cache}} }
 
@@ -101,6 +104,18 @@ Related commands:
   }
 }}
 
+{for;~index;1;<;4;
+  {if; {flagset;{get;~index}};
+    {set; ~cursemod{get;~index}; {flag; {get;~index}}}
+    {jset; _cache; {get; ~raidtierzone}.flagcurse{get;~index}; {get;~cursemod{get;~index}}; create}
+  ;
+    {set; ~cursemod{get;~index}; 1.0}
+    {jset; _cache; {get; ~raidtierzone}.flagcurse{get;~index}; {get;~cursemod{get;~index}}; create}
+    {if; {get; ~iscacheexpired}; 
+    }
+  }
+}
+
 {//; get buff text}
 {set; ~raidbuffindex; {shift;{filter;~element;{jkeys;_raiddata;Buffs};{bool;{get;~element};contains;|{jget; ~raidbuff;BonusType}|}}} }
 {set; ~raidbuffacro; {shift;{split;{get;~raidbuffindex};|}} }
@@ -112,18 +127,20 @@ Related commands:
 
 {//; get seed and titan name}
 {set; ~raidtierzonedata; {jget;_raiddata;Seeds.{get; ~raidtierzone}} }
-{set; ~raidbasehp; {jget;~raidtierzonedata;BaseHP}}{//; TODO: load from first titan}
+{set; ~raidbasehp; {jget;~seedtierzone;{jget;~seedtierzone;enemy_names.0}.total_hp}}
 {jset; _cache ; {get; ~raidtierzone}.computed.basehp; {parseint;{get;~raidbasehp}}; create}
 {for;~index;1;<;4;
   {set; ~enemyid; {jget;~raidtierzonedata;Titan{get;~index}} }
   
+  {//; get each titan name}
   {set; ~raidtitan{get;~index}name; {jget;~enemynames;{math;-;{get;~index};1}} }
   {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.name; {get;~raidtitan{get;~index}name}; create}
   
-  {set; ~raidtitan{get;~index}; {jget; ~seedtierzone; {get; ~raidtitan{get;~index}name}.area_debuffs.0} }
+  {set; ~raidtitandebuff{get;~index}; {jget; ~seedtierzone; {get; ~raidtitan{get;~index}name}.area_debuffs.0} }
+  {set; ~ishpmultdebuff; {bool;{jget;~raidtitandebuff{get;~index};BonusType};endswith;HPMult}}
   {set; ~raidtitanparts{get;~index}; {jget; ~seedtierzone; {get; ~raidtitan{get;~index}name}.parts} }
   {set; ~raidtitancurse{get;~index}; {jget; ~seedtierzone; {get; ~raidtitan{get;~index}name}.cursed_debuffs.0} }
-  {jset; _cache ; {get; ~raidtierzone}.flag{get;~index}; {get;~raidtitan{get;~index}}; create}
+  {jset; _cache ; {get; ~raidtierzone}.flag{get;~index}; {get;~raidtitandebuff{get;~index}}; create}
   {//; jset; _cache ; {get; ~raidtierzone}.parts{get;~index}; {get;~raidtitanparts{get;~index}}; create}
   {jset; _cache ; {get; ~raidtierzone}.curse{get;~index}; {get;~raidtitancurse{get;~index}}; create}
   
@@ -134,28 +151,27 @@ Related commands:
   {sort; ~raidtitancurseparts{get;~index}}
   {jset; _cache ; {get; ~raidtierzone}.curse{get;~index}.parts; {get;~raidtitancurseparts{get;~index}}; create}
   
-  {//; get each titan name}
-  {set; ~raidtitan{get;~index}name; {jget;_raiddata;Enemies.Enemy{get; ~enemyid}} }{//; TODO: get from seed}
-  {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.name; {get;~raidtitan{get;~index}name}; create}
-  
   // get each titan hp
   {set; ~raidenemy{get;~enemyid}hp; 0}
-  {//; TODO: get each titan base hp}
-  {set; ~raidenemy{get;~enemyid}hptab; {jget;_raiddata;HPs.Enemy{get;~enemyid}} }{//; TODO: load hp from seed, and divide it with base hp}
-  
-  {//; split debuff [acro|titans strat], if | doesn't exists load default strat} {//; TODO: rework this whole chunk, for HPMult set all HP to 1 as total_hp already loading from seed which already multiplied}
-  {if;{bool;>;{indexof;{get; ~raidtitan{get;~index}};|};-1};
-    {set; ~raidtitan{get;~index}strat; {pop;{split;{get;~raidtitan{get;~index}};|}} }{//; TODO: get from _strat}
-    {set; ~raiddebuff{get;~index}acro; {shift;{split;{get;~raidtitan{get;~index}};|}} }{//; TODO: can skip acro or follow buff logic}
-  ;
-    {set; ~raidtitan{get;~index}strat; {jget;_raiddata;DefaultStrategy.Enemy{get;~enemyid}} }
-    {set; ~raiddebuff{get;~index}acro; {get;~raidtitan{get;~index}} }
+  {set; ~raidenemy{get;~enemyid}basehp; {jget;~seedtierzone;{get;~raidtitan{get;~index}name}.total_hp}}
+  {//; set; ~raidenemy{get;~enemyid}hptab; {jget;_raiddata;HPs.Enemy{get;~enemyid}} }
+  {set; ~raidenemy{get;~enemyid}hptab; {j;{}}}
+  {foreach;~elem;{get;~raidtitanparts{get;~index}};
+    {jset;~raidenemy{get;~enemyid}hptab;
+      {jget;_raiddata;Parts.{jget;~elem;part_id}};
+      {math;/;
+        {parsefloat;{jget;~elem;total_hp}};
+        {parsefloat;{get;~raidenemy{get;~enemyid}basehp}}
+      }
+    }
   }
+  
+  {set; ~raidtitan{get;~index}strat; {jget;_strat;Enemy{get;~enemyid}} }
   {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.strat; {get;~raidtitan{get;~index}strat}; create}
   
-  {//; get debuff text}{//; TODO: follow buff logic}
-  {set; ~raiddebuff{get;~index}index; {shift;{filter;~element;{jkeys;_raiddata;Debuffs };{bool;{get;~element};startswith;{get; ~raiddebuff{get;~index}acro}|}}} }
-  {set; ~raiddebuff{get;~index}text; {pop;{split;{get;~raiddebuff{get;~index}index};|}} }
+  {//; get debuff text}
+  {set; ~raiddebuff{get;~index}index; {shift;{filter;~element;{jkeys;_raiddata;Debuffs};{bool;{get;~element};contains;|{jget;~raidtitandebuff{get;~index};BonusType}|}}} }
+  {set; ~raiddebuff{get;~index}text; {func.debuffformat;{get; ~raidtitandebuff{get;~index}}} }
   {set; ~raiddebuff{get;~index}tab; {jget; _raiddata; Debuffs.{get;~raiddebuff{get;~index}index}} }
   {jset; _cache; {get; ~raidtierzone}.computed.debuff{get;~index}.text; {get;~raiddebuff{get;~index}text}; create}
   {jset; _cache; {get; ~raidtierzone}.computed.debuff{get;~index}.tab; {get;~raiddebuff{get;~index}tab}; create}
@@ -171,7 +187,6 @@ Related commands:
     {//; get body part %}
     {set; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}b; {math; *; 
       {jget; ~raidenemy{get; ~enemyid}hptab; {get; ~partid}b};
-      {parsefloat; {jget; ~raiddebuff{get;~index}tab; {get; ~partid}bh}};
       {parsefloat;
         {substring;
           {get; ~raidtitan{get;~index}strat};
@@ -184,7 +199,6 @@ Related commands:
     {//; get armor part %}
     {set; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}a; {math; *; 
       {jget; ~raidenemy{get; ~enemyid}hptab; {get; ~partid}a};
-      {parsefloat; {jget; ~raiddebuff{get;~index}tab; {get; ~partid}ah}};
       {parsefloat;
         {substring;
           {get; ~raidtitan{get;~index}strat};
@@ -213,13 +227,13 @@ Related commands:
     {//; get mod from buff and debuff combo for parts, refer to sheet `TitanModCalculator` for clearer view }
     {set; ~raidbuffdebuff{get;~partid}modb; {math;+;
       {parsefloat; {jget; ~raidbufftab; {get;~partid}bd}};
-      {parsefloat; {jget; ~raiddebuff{get;~index}tab; {get;~partid}bd}};
+      {parsefloat; {if;{get;~ishpmultdebuff};1.0;{jget; ~raiddebuff{get;~index}tab; {get;~partid}bd}}};
       -2
     }}
     {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.modb.{get;~partid}; {parseint;{get;~raidbuffdebuff{get;~partid}modb}}; create}
     {set; ~raidbuffdebuff{get;~partid}moda; {math;+;
       {parsefloat; {jget; ~raidbufftab; {get;~partid}ad}};
-      {parsefloat; {jget; ~raiddebuff{get;~index}tab; {get;~partid}ad}};
+      {parsefloat; {if;{get;~ishpmultdebuff};1.0;{jget; ~raiddebuff{get;~index}tab; {get;~partid}ad}}};
       -2
     }}
     {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.moda.{get;~partid}; {parseint;{get;~raidbuffdebuff{get;~partid}moda}}; create}
@@ -250,8 +264,9 @@ Related commands:
   
   {set; ~raidenemy{get;~enemyid}finalmod; {math;+;
     {parsefloat; {jget; ~raidbufftab; DamageMod}};
-    {parsefloat; {jget; ~raiddebuff{get;~index}tab; DamageMod}};
-    -2;
+    {parsefloat; {if;{get;~ishpmultdebuff};1.0;{jget; ~raiddebuff{get;~index}tab; DamageMod}}};
+    {parsefloat; {get; ~cursemod{get;~index}}};
+    -3;
     {math;/;
       {math;+;
         {get; ~raidenemy{get;~enemyid}mod};
@@ -392,7 +407,7 @@ Related commands:
 {set;~idx;0}
 {set; ~embed; {j;{}}}
 {jset; ~embed; title; Preview: {get; ~raidtierzone} ({get; _membercount}:bust_in_silhouette: ) ;create}
-{jset; ~embed; description; Buff: {func.buffformat;{get; ~raidbuff}}{newline}Sequence: {join;{map;~item;{get; ~spawnsequence};{increment;~idx}{func.titanemoji;{get;~item}}}; } ;create}
+{jset; ~embed; description; Buff: {func.buffformat;{get; ~raidbuff}}{newline}Sequence: {join;{map;~item;{get; ~spawnsequence};{increment;~idx}{func.titanemoji;{get;~item}}};{space}} ;create}
 {jset; ~embed; color; {switch;{get;~raidtier};1;16777215;2;255;3;10845184;4;6697881} ;create}
 {jset; ~embed; footer.text; (N)Normal (C)Cursed | (O)Hit (X)Avoid ;create}
 {set; ~embedfields; []}
@@ -402,7 +417,7 @@ Related commands:
 {jset; ~embedfield; value; {clean;
   Morale: {get; _raidmorale}%
   Unbuffed Avg: {numformat;{get; _raidunbuffedavg};2}M
-  CurseMod: (1)1.0 (2)1.0 (3)1.0
+  CurseMod: {for;~index;1;<;4;({get;~index}){get;~cursemod{get;~index}}{space}}
 };create}
 {jset; ~embedfield; inline; true ;create}
 {push; ~embedfields; {get; ~embedfield}}
@@ -421,7 +436,7 @@ Related commands:
 {jset; ~embedfield; value; {clean;
   Cycles: {get;~raidtotalcycle}
   Kill Cycle Hits: {get;~killcyclehits}
-  Raid Mod: {get; ~raidmod}
+  Raid Mod: {numformat;{get; ~raidmod};2}
   Buffed Avg: {numformat;{get; ~raidbuffedavg};2}M
 };create}
 {jset; ~embedfield; inline; true ;create}
@@ -442,7 +457,7 @@ Related commands:
   {jset; ~embedfield; name; {func.titanemoji;{get;~enemyid}} **{get; ~raidtitan{get;~index}name} x{get; ~raidtitan{get;~index}qty}** ;create}
   {jset; ~embedfield; value; {clean;
     HP: {realpad;{numformat;{math;/;{get;~raidenemy{get;~enemyid}hp};1000000};2}M;9;{space};left}
-    Debuff: {func.debuffformat;{get; ~raiddebuff{get;~index}acro}}
+    Debuff: {get;~raiddebuff{get;~index}text}
     TitanMod: {numformat;{get; ~raidenemy{get;~enemyid}finalmod};2}
     }{if;{length;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.parts}};>;0;{if;{flagset;s};{newline}Curse: {func.truncaffl;{shift;{match;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.BonusType};/[A-Z]+[a-z]+/g}}} ({join;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.parts};,});{clean;
       {newline}Curse (x{length;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.parts}}): {get;~cursename}
@@ -463,6 +478,13 @@ Related commands:
   {jset; ~embedfield; inline; true ;create}
   {push; ~embedfields; {get; ~embedfield}}
 }
+
+{//; fields reserved for debugging, comment the push if not debugging}
+{set; ~embedfield; {j;{}}}
+{jset; ~embedfield; name; **Debug** ;create}
+{jset; ~embedfield; value; Lorem ipsum dolor ;create}
+{//; push; ~embedfields; {get; ~embedfield}}
+
 {jset; ~embed; fields; {get; ~embedfields} ;create}
 
 {output;{embed;{jclean;{get; ~embed}}}}

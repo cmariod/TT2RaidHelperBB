@@ -9,14 +9,15 @@ Notes:
 - execute this command in the same channel as gh post in your server.
 
 Usage:
-{prefix}{commandname} <message_id>
+{prefix}{commandname} <message_id or message_link>
 
 Example:
 {prefix}{commandname} 877931038964338711
+{prefix}{commandname} https://discord.com/channels/387080866196750366/877679528904888350/877931038964338711
 ```{return}
 }
 
-{set; ~arg0; {jget; {argsarray}; 0}}
+{set; ~arg0; {pop;{split;{args; 0};/}}}
 
 {//;auto detection to load discord cdn url straight}
 

@@ -166,7 +166,8 @@ Related commands:
     }
   }
   
-  {set; ~raidtitan{get;~index}strat; {jget;_strat;Enemy{get;~enemyid}} }
+  {set; ~debuffid; {func.debuffid;{get;~raidtitandebuff{get;~index}}}}
+  {set; ~raidtitan{get;~index}strat; {jget;_strat;{if;{func.jkeyexists;_strat;{get;~debuffid}.Enemy{get;~enemyid}};{get;~debuffid};Default}.Enemy{get;~enemyid}} }
   {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.strat; {get;~raidtitan{get;~index}strat}; create}
   
   {//; get debuff text}
@@ -453,7 +454,7 @@ Related commands:
     ;C}
   }
   {set; ~cursename; {func.curseformat;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}}}}
-  {set; ~titanstrategy; {split;{regexreplace;{regexreplace;{jget;_strat;Enemy{get; ~enemyid}};/1/gi;O};/0/gi;X};}}
+  {set; ~titanstrategy; {split;{regexreplace;{regexreplace;{get; ~raidtitan{get;~index}strat};/1/gi;O};/0/gi;X};}}
   
   {jset; ~embedfield; name; {func.titanemoji;{get;~enemyid}} **{get; ~raidtitan{get;~index}name} x{get; ~raidtitan{get;~index}qty}** ;create}
   {jset; ~embedfield; value; {clean;

@@ -20,9 +20,13 @@
   {set;~percent;{func.topercent;{jget; {params;0}; BonusAmount}}}{if;{jget; {params;0}; BonusType};endswith;HPMult;+{get;~percent};{if;{get;~percent};>;0;{math;-;{get;~percent};100};{get;~percent}}}% {func.camelcasespacer;{jget; {params;0}; BonusType}}
 }}
 
+{func;debuffid;{jget;{params;0};BonusType}{replace;{jget;{params;0};BonusAmount};.;}}
+
 {func;curseformat;{clean;
   {set;~match;{match;{jget; {params;0}; BonusType};/[A-Z]+[a-z]+/g}}{set;~length;{length;{get;~match}}}{func.topercent;{jget; {params;0}; BonusAmount}}% {join;{slice;{map;~item;{get;~match};{func.truncaffl;{get;~item};5}};0;2};{space}}
 }}
+
+{func;stratformat;{regexreplace;{regexreplace;{params;0};/1/gi;O};/0/gi;X}}
 
 {func;camelcasespacer;{clean;
   {join;{match;{params;0};/[A-Z]+[a-z]+/g};{space}}
@@ -35,3 +39,5 @@
 {func;titanemoji;{switch;{lower;{params;0}};["1","lojak"];<:Lojak:880048138881204244>;["2","takedar"];<:Takedar:880048138415652874>;["3","jukk"];<:Jukk:880048138600202241>;["4","sterl"];<:Sterl:880048138973499392>;["5","mohaca"];<:Mohaca:880048138965102622>;["6","terro"];<:Terro:880048140135325717>}}
 
 {func;jfilterkeys;{set;~filteredkeys;{filter;~element;{jkeys;{params;0}};{bool;{get;~element};{params;1};{params;2}}}}{set;~returnjson;{j;{}}}{foreach;~elem;{get;~filteredkeys};{jset;~returnjson;{get;~elem};{jget;{params;0};{get;~elem}};create}}{get;~returnjson}}
+
+{func;jkeyexists;{set;~path;{split;{params;1};.}}{set;~key;{pop;~path}}{set;~path;{join;~path;.}}{bool;{indexof;{jkeys;{params;0};{get;~path}};{get;~key}};!=;-1}}

@@ -79,4 +79,4 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
 
 {jset; _strat; {get;~debuff}.{get; ~enemyid}; {args; {math;-;{argslength};1}}; create}
 
-{output; {get; ~match} {func.debuffformat;{jget;_seed;{args;1}.{get;~match}.area_debuffs.0}} strategy set to {args; {math;-;{argslength};1}}}
+{output; {get; ~match} {if;{argslength};==;2;Default;{func.debuffformat;{jget;_seed;{args;1}.{get;~match}.area_debuffs.0}}} strategy set to {args; {math;-;{argslength};1}}}

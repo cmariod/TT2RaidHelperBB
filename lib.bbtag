@@ -21,7 +21,7 @@
 }}
 
 {func;curseformat;{clean;
-  {set;~match;{match;{jget; {params;0}; BonusType};/[A-Z]+[a-z]+/g}}{set;~length;{length;{get;~match}}}{func.topercent;{jget; {params;0}; BonusAmount}}% {join;{map;~item;{get;~match};{func.truncaffl;{get;~item};5}};{space}}
+  {set;~match;{match;{jget; {params;0}; BonusType};/[A-Z]+[a-z]+/g}}{set;~length;{length;{get;~match}}}{func.topercent;{jget; {params;0}; BonusAmount}}% {join;{slice;{map;~item;{get;~match};{func.truncaffl;{get;~item};5}};0;2};{space}}
 }}
 
 {func;camelcasespacer;{clean;

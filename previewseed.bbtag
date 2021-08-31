@@ -14,14 +14,14 @@ Parameters:
   -p  {realpad;<power>;25} clan power / member count, e.g. 50
   
 Titan Curse Configuration:
-  -1  {realpad;<debuff_titan1[|strat]>;25} titan 1 curse mod, e.g. 0.94
-  -2  {realpad;<debuff_titan2[|strat]>;25} titan 2 curse mod, e.g. 1.0
-  -3  {realpad;<debuff_titan3[|strat]>;25} titan 3 curse mod, e.g. 0.88
+  -1  {realpad;<cursemod titan1>;25} titan 1 curse mod, e.g. 0.94
+  -2  {realpad;<cursemod titan2>;25} titan 2 curse mod, e.g. 1.0
+  -3  {realpad;<cursemod titan3>;25} titan 3 curse mod, e.g. 0.88
 
 Defaults:
 - d will default to last known input or error
 - m will default to last known input or minimum for raid tier
-- 1,2,3 will default to 1.0
+- 1,2,3 will auto calculate if not exists
 
 Related commands:
 {realpad;{prefix}seed;20} to set seed data based on gh posts
@@ -41,9 +41,9 @@ Related commands:
     "flag1":"non",
     "flag2":"non",
     "flag3":"non",
-    "flagcurse1":1.0,
-    "flagcurse2":1.0,
-    "flagcurse3":1.0
+    "flagcurse1":0.0,
+    "flagcurse2":0.0,
+    "flagcurse3":0.0
   }
 }}; {get; _cache}} }
 
@@ -109,7 +109,7 @@ Related commands:
     {set; ~cursemod{get;~index}; {flag; {get;~index}}}
     {jset; _cache; {get; ~raidtierzone}.flagcurse{get;~index}; {get;~cursemod{get;~index}}; create}
   ;
-    {set; ~cursemod{get;~index}; 1.0}
+    {set; ~cursemod{get;~index}; 0.0}
     {jset; _cache; {get; ~raidtierzone}.flagcurse{get;~index}; {get;~cursemod{get;~index}}; create}
     {if; {get; ~iscacheexpired}; 
     }
@@ -180,32 +180,23 @@ Related commands:
   {set; ~raidenemy{get;~enemyid}hp; {get; ~raidbasehp}}
   {set; ~raidenemy{get;~enemyid}hpprcnt; {parsefloat; 0}}
   {set; ~raidenemy{get;~enemyid}hpprcntb; {parsefloat; 0}}
-  {//; TODO: TBR set; ~raidenemy{get;~enemyid}modbase; {jget;_raiddata;HPStandard.Enemy{get;~enemyid}.TotalHPPercent} }
   {set; ~raidenemy{get;~enemyid}mod; {parsefloat; 0}}
+  {set; ~isblankcursemod; {bool; {get; ~cursemod{get;~index}}; <=; 0}}
+  {set; ~cursemod{get;~index}; {if;{get;~isblankcursemod};1.0;{get;~cursemod{get;~index}}}}
+  {set; ~partstrategy; {concat;["0", "0"]; {split; {get; ~raidtitan{get;~index}strat};}}}
   
   {for;~partid;2;<;10;
     {//; get body part %}
+    {set; ~ispartinstrat; {bool;{jget;~partstrategy;{get;~partid}};>;0}}
     {set; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}b; {math; *; 
       {jget; ~raidenemy{get; ~enemyid}hptab; {get; ~partid}b};
-      {parsefloat;
-        {substring;
-          {get; ~raidtitan{get;~index}strat};
-          {math;-;{get; ~partid}; 2};
-          {math;-;{get; ~partid}; 1}
-        }
-      }
+      {parsefloat; {jget;~partstrategy;{get;~partid}} }
     }}
     {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.partb.{get;~partid}; {parsefloat;{get;~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}b}}; create}
     {//; get armor part %}
     {set; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}a; {math; *; 
       {jget; ~raidenemy{get; ~enemyid}hptab; {get; ~partid}a};
-      {parsefloat;
-        {substring;
-          {get; ~raidtitan{get;~index}strat};
-          {math;-;{get; ~partid}; 2};
-          {math;-;{get; ~partid}; 1}
-        }
-      }
+      {parsefloat; {jget;~partstrategy;{get;~partid}} }
     }}
     {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.parta.{get;~partid}; {parsefloat;{get; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}a}}; create}
     
@@ -247,6 +238,16 @@ Related commands:
         {get; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}a}
       }
     }; false}
+    
+    {//; attempt to roughly calculate curse math}
+    {if; {get; ~isblankcursemod};
+      {increment; ~cursemod{get;~index}; {math;*;
+        {parsefloat;{if; {indexof;{get;~raidtitancurseparts{get;~index}};{get;~partid}a}; !=; -1; {jget;~raidtitancurse{get;~index};BonusAmount}; 0}};
+        {if; {get;~ispartinstrat}; 0.5; 1};
+        {if; {jget;~raidtitancurse{get;~index};BonusType}; startswith; Burst; 0.6; 0.4}
+      }; false}
+    }
+    
   }{//; end of parts loop}
   
   {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.tempmod; {parseint;{get;~raidenemy{get;~enemyid}mod}}; create}
@@ -417,7 +418,7 @@ Related commands:
 {jset; ~embedfield; value; {clean;
   Morale: {get; _raidmorale}%
   Unbuffed Avg: {numformat;{get; _raidunbuffedavg};2}M
-  CurseMod: {for;~index;1;<;4;({get;~index}){get;~cursemod{get;~index}}{space}}
+  {if; {get;~isblankcursemod};;CurseMod: {for;~index;1;<;4;({get;~index}){numformat;{get;~cursemod{get;~index}};2}{space}}}
 };create}
 {jset; ~embedfield; inline; true ;create}
 {push; ~embedfields; {get; ~embedfield}}
@@ -458,7 +459,7 @@ Related commands:
   {jset; ~embedfield; value; {clean;
     HP: {realpad;{numformat;{math;/;{get;~raidenemy{get;~enemyid}hp};1000000};2}M;9;{space};left}
     Debuff: {get;~raiddebuff{get;~index}text}
-    TitanMod: {numformat;{get; ~raidenemy{get;~enemyid}finalmod};2}
+    TitanMod: {numformat;{get; ~raidenemy{get;~enemyid}finalmod};2} *(Curse: -{numformat;{math;-;1;{get;~cursemod{get;~index}}};2})*
     }{if;{length;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.parts}};>;0;{if;{flagset;s};{newline}Curse: {func.truncaffl;{shift;{match;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.BonusType};/[A-Z]+[a-z]+/g}}} ({join;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.parts};,});{clean;
       {newline}Curse (x{length;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.parts}}): {get;~cursename}
       }{newline}**Curse**

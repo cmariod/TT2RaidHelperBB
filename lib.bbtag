@@ -20,6 +20,8 @@
   {set;~percent;{func.topercent;{jget; {params;0}; BonusAmount}}}{if;{jget; {params;0}; BonusType};endswith;HPMult;+{get;~percent};{if;{get;~percent};>;0;{math;-;{get;~percent};100};{get;~percent}}}% {func.camelcasespacer;{jget; {params;0}; BonusType}}
 }}
 
+{func;buffdebuffacro;{join;{slice;{match;{jget; {params;0}; BonusType};/[A-Z][A-Za-z]/g};0;3};}{jget; {params;0}; BonusAmount}}
+
 {func;debuffid;{jget;{params;0};BonusType}{replace;{jget;{params;0};BonusAmount};.;}}
 
 {func;curseformat;{clean;

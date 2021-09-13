@@ -1,7 +1,7 @@
 {execcc;haspermissions}
 {execcc;lib}
 
-{ if; { flagset; t }; {output; ```{prefix}{commandname} -r 3-60 -d 7.5 -m 15.5 -1 0.94 -2 1.0 -3 0.88 -p 50```
+{ if; { flagset; t }; {output; ```{prefix}{commandname} -r 4-1 -d 10 -m 20.1```
 }{return}}
 
 { if; {logic; ||; { flagset; h }; {bool; {length; {flagsarray}}; ==; 1}}; {output;
@@ -166,7 +166,7 @@ Related commands:
     }
   }
   
-  {set; ~debuffid; {func.debuffid;{get;~raidtitandebuff{get;~index}}}}
+  {set; ~debuffid; {func.buffid;{get;~raidtitandebuff{get;~index}}}}
   {set; ~raidtitan{get;~index}strat; {jget;_strat;{if;{func.jkeyexists;_strat;{get;~debuffid}.Enemy{get;~enemyid}};{get;~debuffid};Default}.Enemy{get;~enemyid}} }
   {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.strat; {get;~raidtitan{get;~index}strat}; create}
   
@@ -410,7 +410,7 @@ Related commands:
 {jset; ~embed; title; Preview: {get; ~raidtierzone} ({get; _membercount}:bust_in_silhouette: ) ;create}
 {jset; ~embed; description; Buff: {func.buffformat;{get; ~raidbuff}}{newline}Sequence: {join;{map;~item;{get; ~spawnsequence};{increment;~idx}{func.titanemoji;{get;~item}}};{space}} ;create}
 {jset; ~embed; color; {switch;{get;~raidtier};1;16777215;2;255;3;10845184;4;6697881} ;create}
-{jset; ~embed; footer.text; {if;{flagset;s};-r {get; ~raidtierzone} -d {numformat;{get; _raidunbuffedavg};2} -m {get; _raidmorale}{for;~index;1;<;4;{space}-{get;~index} {func.debuffid;{get;~raidtitandebuff{get;~index}}} {get; ~raidtitan{get;~index}strat} {func.truncaffl;{shift;{match;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.BonusType};/[A-Z]+[a-z]+/g}}} {numformat;{math;-;1;{get;~cursemod{get;~index}}};2} ({join;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.parts};,})} -s {get;~titansequence} -p {get; _membercount}{newline}bavg {numformat;{get; ~raidbuffedavg};2}M miavg {numformat;{math;/;{get; ~avgneeded}; 1000000};2;;,}M mod {numformat;{get; ~raidmod};2} {get;~raidtotalcycle}C({get;~killcyclehits});(N)Normal (C)Cursed | (O)Hit (X)Avoid} ;create}
+{jset; ~embed; footer.text; {if;{flagset;s};-r {get; ~raidtierzone} -d {numformat;{get; _raidunbuffedavg};2} -m {get; _raidmorale}{for;~index;1;<;4;{space}-{get;~index} {func.buffid;{get;~raidtitandebuff{get;~index}}} {get; ~raidtitan{get;~index}strat} {func.truncaffl;{shift;{match;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.BonusType};/[A-Z]+[a-z]+/g}}} {numformat;{math;-;1;{get;~cursemod{get;~index}}};2} ({join;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.parts};,})} -s {get;~titansequence} -p {get; _membercount}{newline}bavg {numformat;{get; ~raidbuffedavg};2}M miavg {numformat;{math;/;{get; ~avgneeded}; 1000000};2;;,}M mod {numformat;{get; ~raidmod};2} {get;~raidtotalcycle}C({get;~killcyclehits});(N)Normal (C)Cursed | (O)Hit (X)Avoid} ;create}
 {set; ~embedfields; []}
 
 {set; ~embedfield; {j;{}}}

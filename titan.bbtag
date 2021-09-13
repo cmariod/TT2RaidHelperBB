@@ -54,7 +54,7 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
     {set; ~embedfields; []}
     {foreach;~enemyname;{jget;_seed;{args;0}.enemy_names};
       {set; ~embedfield; {j;{}}}
-      {set; ~debuff; {func.debuffid;{jget;_seed;{args;0}.{get;~enemyname}.area_debuffs.0}}}
+      {set; ~debuff; {func.buffid;{jget;_seed;{args;0}.{get;~enemyname}.area_debuffs.0}}}
       {set; ~matchidx; {indexof; {jvalues; _raiddata; Enemies}; {get; ~enemyname}}}
       {set; ~enemyid; {jget; {jkeys; _raiddata; Enemies}; {get; ~matchidx}}}
       {set; ~titanstrategy; {split;{func.stratformat;{jget;_strat;{if;{func.jkeyexists;_strat;{get;~debuff}.{get;~enemyid}};{get;~debuff};Default}.{get;~enemyid}}};}}
@@ -75,7 +75,7 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
 {set; ~matchidx; {indexof; {jvalues; _raiddata; Enemies}; {get; ~match}}}
 {set; ~enemyid; {jget; {jkeys; _raiddata; Enemies}; {get; ~matchidx}}}
 
-{set;~debuff;{if;{argslength};==;2;Default;{func.debuffid;{jget;_seed;{args;1}.{get;~match}.area_debuffs.0}}}}
+{set;~debuff;{if;{argslength};==;2;Default;{func.buffid;{jget;_seed;{args;1}.{get;~match}.area_debuffs.0}}}}
 
 {jset; _strat; {get;~debuff}.{get; ~enemyid}; {args; {math;-;{argslength};1}}; create}
 

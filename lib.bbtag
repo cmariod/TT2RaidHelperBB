@@ -22,10 +22,14 @@
 
 {func;buffdebuffacro;{join;{slice;{match;{jget; {params;0}; BonusType};/[A-Z][A-Za-z]/g};0;3};}{jget; {params;0}; BonusAmount}}
 
-{func;debuffid;{jget;{params;0};BonusType}{replace;{jget;{params;0};BonusAmount};.;}}
+{func;buffid;{jget;{params;0};BonusType}{replace;{jget;{params;0};BonusAmount};.;}}
 
 {func;curseformat;{clean;
   {set;~match;{match;{jget; {params;0}; BonusType};/[A-Z]+[a-z]+/g}}{set;~length;{length;{get;~match}}}{func.topercent;{jget; {params;0}; BonusAmount}}% {join;{slice;{map;~item;{get;~match};{func.truncaffl;{get;~item};5}};0;2};{space}}
+}}
+
+{func;curseacro;{clean;
+  {set;~curse;{shift;{match;{params;0};/[A-Z]+[a-z]+/g}}}{if;{get;~curse};startswith;Afflict;Afflic;{get;~curse}}
 }}
 
 {func;stratformat;{regexreplace;{regexreplace;{params;0};/1/gi;O};/0/gi;X}}

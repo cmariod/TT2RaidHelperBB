@@ -1,16 +1,45 @@
 {execcc;haspermissions}
+{execcc;lib}
 
 { if; {logic; ||; { flagset; h }; {bool; {length; {flagsarray}}; ==; 1}}; {output;
-```{prefix}{commandname} [-b <buff_keyword>] [-d <debuff_keyword>]
+```
+Example: Show raid seed starting from 3-55
+{prefix}{commandname} 3 55
+```
+}{return}}
 
-Buffs:
-{join;{jkeys;_raiddata;Buffs };{newline}}
+{set;~buff;{j;{}}}
+{set;~debuff;{j;{}}}
 
-Debuffs:
-{join;{jkeys;_raiddata;Debuffs };{newline}}
-```}{return}}
+{set;~isstarted;false}
+{set;~count;0}
 
-{output;```
-{if; {flagset;b}; Buff:{newline}{join;{filter;~element;{jkeys;_raiddata;Buffs };{bool;{get;~element};startswith;{flag;b}}};{newline}}{newline}}
-{if; {flagset;d}; Debuff:{newline}{join;{filter;~element;{jkeys;_raiddata;Debuffs };{bool;{get;~element};startswith;{flag;d}}};{newline}}}
-```}
+{set; ~embeds; []}
+{set; ~embed; {j;{}}}
+{jset; ~embed; title; Raid List Preview ;create}
+{jset; ~embed; color; 16316671 ;create}
+
+{set; ~embedfields; []}
+
+{foreach;~raidtierzone;{jvalues;_seed};
+  {if;{jget; ~raidtierzone; Tier}-{jget; ~raidtierzone; Level};==;{args;0}-{args;1};{set;~isstarted;true}}
+  {if;{get;~count};==;10;{set;~isstarted;false}}
+  {if;{get;~isstarted};
+    {set;~tier;{jget; ~raidtierzone; Tier}}
+    {switch; {get;~tier};
+      ["3","4"];
+        {set; ~embedfield; {j;{}}}
+        {jset; ~embedfield; name; {jget; ~raidtierzone; Tier}-{jget; ~raidtierzone; Level} ({func.buffformat;{jget;~raidtierzone;area_buffs.0}});create}
+        {jset; ~embedfield; value; {foreach;~enemyname;{jget;~raidtierzone;enemy_names};
+          {func.titanemoji;{get;~enemyname}}{space}{if;{get;~tier};==;4;{func.curseacro;{jget;~raidtierzone;{get;~enemyname}.cursed_debuffs.0.BonusType}}{space}{set; ~raidtitancurseparts; []}{foreach;~elem;{jget; ~raidtierzone;{get; ~enemyname}.parts};{if;{jget;~elem;cursed};{push;~raidtitancurseparts;{jget;_raiddata;Parts.{jget;~elem;part_id}}}}}Curse ({join;{get;~raidtitancurseparts};,}){space}}{func.debuffformat;{jget;~raidtierzone;{get;~enemyname}.area_debuffs.0}}{newline}
+        };create}
+        {push; ~embedfields; {get; ~embedfield}}
+      ;
+    }
+    {increment;~count}
+  }
+}
+
+{jset; ~embed; fields; {get; ~embedfields} ;create}
+
+{output;{embed;{jclean;{get; ~embed}}}}

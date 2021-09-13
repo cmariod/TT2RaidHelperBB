@@ -1,7 +1,7 @@
 {execcc;haspermissions}
 {execcc;lib}
 
-{ if; {logic; ||; { flagset; h }; {bool; {length; {flagsarray}}; ==; 1}}; {output;
+{if;{argslength};==;0; {output;
 ```
 Example: Show raid seed starting from 3-55
 {prefix}{commandname} 3 55

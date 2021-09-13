@@ -31,7 +31,7 @@ Example: Show raid seed starting from 3-55
         {set; ~embedfield; {j;{}}}
         {jset; ~embedfield; name; {jget; ~raidtierzone; Tier}-{jget; ~raidtierzone; Level} ({func.buffformat;{jget;~raidtierzone;area_buffs.0}});create}
         {jset; ~embedfield; value; {foreach;~enemyname;{jget;~raidtierzone;enemy_names};
-          {func.titanemoji;{get;~enemyname}}{space}{if;{get;~tier};==;4;{func.curseacro;{jget;~raidtierzone;{get;~enemyname}.cursed_debuffs.0.BonusType}}{space}{set; ~raidtitancurseparts; []}{foreach;~elem;{jget; ~raidtierzone;{get; ~enemyname}.parts};{if;{jget;~elem;cursed};{push;~raidtitancurseparts;{jget;_raiddata;Parts.{jget;~elem;part_id}}}}}Curse ({join;{get;~raidtitancurseparts};,}){space}}{func.debuffformat;{jget;~raidtierzone;{get;~enemyname}.area_debuffs.0}}{newline}
+          {func.titanemoji;{get;~enemyname}}{space}{if;{get;~tier};==;4;{func.curseacro;{jget;~raidtierzone;{get;~enemyname}.cursed_debuffs.0.BonusType}}{space}{set; ~raidtitancurseparts; []}{foreach;~elem;{jget; ~raidtierzone;{get; ~enemyname}.parts};{if;{jget;~elem;cursed};{push;~raidtitancurseparts;{jget;_raiddata;Parts.{jget;~elem;part_id}}}}}{sort; ~raidtitancurseparts}Curse ({join;{get;~raidtitancurseparts};,}){space}}{func.debuffformat;{jget;~raidtierzone;{get;~enemyname}.area_debuffs.0}}{newline}
         };create}
         {push; ~embedfields; {get; ~embedfield}}
       ;

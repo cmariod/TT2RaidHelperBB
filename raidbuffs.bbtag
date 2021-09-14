@@ -1,10 +1,10 @@
 {execcc;haspermissions}
 {execcc;lib}
 
-{if;{argslength};==;0; {output;
+{if;{argslength};!=;1; {output;
 ```
 Example: Show raid seed starting from 3-55
-{prefix}{commandname} 3 55
+{prefix}{commandname} 3-55
 ```
 }{return}}
 
@@ -22,7 +22,7 @@ Example: Show raid seed starting from 3-55
 {set; ~embedfields; []}
 
 {foreach;~raidtierzone;{jvalues;_seed};
-  {if;{jget; ~raidtierzone; Tier}-{jget; ~raidtierzone; Level};==;{args;0}-{args;1};{set;~isstarted;true}}
+  {if;{jget; ~raidtierzone; Tier}-{jget; ~raidtierzone; Level};==;{args;0};{set;~isstarted;true}}
   {if;{get;~count};==;8;{set;~isstarted;false}}
   {if;{get;~isstarted};
     {set;~tier;{jget; ~raidtierzone; Tier}}

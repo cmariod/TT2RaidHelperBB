@@ -32,6 +32,10 @@
   {set;~curse;{shift;{match;{params;0};/[A-Z]+[a-z]+/g}}}{if;{get;~curse};startswith;Afflict;Afflic;{get;~curse}}
 }}
 
+{func;partidtoacro;{clean;
+  {switch;{substring;{params;0};0;1};2;He;3;To;4;LS;5;LH;6;LL;7;RL;8;RH;9;RS}
+}}
+
 {func;stratformat;{regexreplace;{regexreplace;{params;0};/1/gi;O};/0/gi;X}}
 
 {func;camelcasespacer;{clean;

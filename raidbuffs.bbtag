@@ -23,16 +23,31 @@ Example: Show raid seed starting from 3-55
 
 {foreach;~raidtierzone;{jvalues;_seed};
   {if;{jget; ~raidtierzone; Tier}-{jget; ~raidtierzone; Level};==;{args;0}-{args;1};{set;~isstarted;true}}
-  {if;{get;~count};==;10;{set;~isstarted;false}}
+  {if;{get;~count};==;8;{set;~isstarted;false}}
   {if;{get;~isstarted};
     {set;~tier;{jget; ~raidtierzone; Tier}}
     {switch; {get;~tier};
       ["3","4"];
         {set; ~embedfield; {j;{}}}
-        {jset; ~embedfield; name; {jget; ~raidtierzone; Tier}-{jget; ~raidtierzone; Level} ({func.buffformat;{jget;~raidtierzone;area_buffs.0}});create}
+        {jset; ~embedfield; name; {jget; ~raidtierzone; Tier}-{jget; ~raidtierzone; Level};create}
+        {jset; ~embedfield; value; {func.buffformat;{jget;~raidtierzone;area_buffs.0}}{newline}{join;{map;~item;{jget; ~raidtierzone; spawn_sequence};{func.titanemoji;{get;~item}}};};create}
+        {jset; ~embedfield; inline; true; create}
+        {push; ~embedfields; {get; ~embedfield}}
+
+        {set; ~embedfield; {j;{}}}
+        {jset; ~embedfield; name; Titan & Curse ; create}
         {jset; ~embedfield; value; {foreach;~enemyname;{jget;~raidtierzone;enemy_names};
-          {func.titanemoji;{get;~enemyname}}{space}{if;{get;~tier};==;4;{func.curseacro;{jget;~raidtierzone;{get;~enemyname}.cursed_debuffs.0.BonusType}}{space}{set; ~raidtitancurseparts; []}{foreach;~elem;{jget; ~raidtierzone;{get; ~enemyname}.parts};{if;{jget;~elem;cursed};{push;~raidtitancurseparts;{jget;_raiddata;Parts.{jget;~elem;part_id}}}}}{sort; ~raidtitancurseparts}Curse ({join;{map;~item;{get;~raidtitancurseparts};{func.partidtoacro;{get;~item}}};,{space}}){space}}{func.debuffformat;{jget;~raidtierzone;{get;~enemyname}.area_debuffs.0}}{newline}
+          {func.titanemoji;{get;~enemyname}}{space}{if;{get;~tier};==;4;{func.curseacro;{jget;~raidtierzone;{get;~enemyname}.cursed_debuffs.0.BonusType}}{space}{set; ~raidtitancurseparts; []}{foreach;~elem;{jget; ~raidtierzone;{get; ~enemyname}.parts};{if;{jget;~elem;cursed};{push;~raidtitancurseparts;{jget;_raiddata;Parts.{jget;~elem;part_id}}}}}{sort; ~raidtitancurseparts}({join;{map;~item;{get;~raidtitancurseparts};{func.partidtoacro;{get;~item}}};,{space}}){space};None}{newline}
         };create}
+        {jset; ~embedfield; inline; true; create}
+        {push; ~embedfields; {get; ~embedfield}}
+
+        {set; ~embedfield; {j;{}}}
+        {jset; ~embedfield; name; Debuff ;create}
+        {jset; ~embedfield; value; {foreach;~enemyname;{jget;~raidtierzone;enemy_names};
+          {func.debuffformat;{jget;~raidtierzone;{get;~enemyname}.area_debuffs.0}}{newline}
+        };create}
+        {jset; ~embedfield; inline; true; create}
         {push; ~embedfields; {get; ~embedfield}}
       ;
     }

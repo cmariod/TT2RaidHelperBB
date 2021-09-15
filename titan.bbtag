@@ -52,14 +52,14 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
     {jset; ~embed; title; Titan Strategy List for {args;0};create}
     {jset; ~embed; description; (O)Hit (X)Avoid ;create}
     {set; ~embedfields; []}
-    {foreach;~enemyname;{jget;_seed;{args;0}.enemy_names};
+    {foreach;~titan;{jget;_seed;{args;0}.titans};
       {set; ~embedfield; {j;{}}}
-      {set; ~debuff; {func.buffid;{jget;_seed;{args;0}.{get;~enemyname}.area_debuffs.0}}}
-      {set; ~matchidx; {indexof; {jvalues; _raiddata; Enemies}; {get; ~enemyname}}}
-      {set; ~enemyid; {jget; {jkeys; _raiddata; Enemies}; {get; ~matchidx}}}
-      {set; ~titanstrategy; {split;{func.stratformat;{jget;_strat;{if;{func.jkeyexists;_strat;{get;~debuff}.{get;~enemyid}};{get;~debuff};Default}.{get;~enemyid}}};}}
+      {set; ~enemyname; {jget;~titan;enemy_name}}
+      {set; ~debuffid; {func.buffid;{jget;~titan;area_debuffs.0}}}
+      {set; ~enemyid; {jget; ~titan; enemy_id}}
+      {set; ~titanstrategy; {split;{func.stratformat;{jget;_strat;{if;{func.jkeyexists;_strat;{get;~debuffid}.{get;~enemyid}};{get;~debuffid};Default}.{get;~enemyid}}};}}
       {jset; ~embedfield; name; {get; ~enemyname} ;create}
-      {jset; ~embedfield; value; {func.debuffformat;{jget;_seed;{args;0}.{get;~enemyname}.area_debuffs.0}}{newline}{jget;~titanstrategy;2} {jget;~titanstrategy;0} {jget;~titanstrategy;7}{newline}{jget;~titanstrategy;3} {jget;~titanstrategy;1} {jget;~titanstrategy;6}{newline}   {jget;~titanstrategy;4} {jget;~titanstrategy;5} ;create}
+      {jset; ~embedfield; value; {func.debuffformat;{jget;~titan;area_debuffs.0}}{newline}{jget;~titanstrategy;2} {jget;~titanstrategy;0} {jget;~titanstrategy;7}{newline}{jget;~titanstrategy;3} {jget;~titanstrategy;1} {jget;~titanstrategy;6}{newline}   {jget;~titanstrategy;4} {jget;~titanstrategy;5} ;create}
       {jset; ~embedfield; inline; true ;create}
       {push; ~embedfields; {get; ~embedfield}}
     }
@@ -71,12 +71,18 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
 
 {if; {length; {args; {math;-;{argslength};1}}}; !=; 8; {output; Missing part in strategy}{return}}
 
-{set; ~match; {shift;{filter;~element;{jvalues; _raiddata; Enemies};{bool;{get;~element};startswith;{capitalize;{args; 0}}}}}}
-{set; ~matchidx; {indexof; {jvalues; _raiddata; Enemies}; {get; ~match}}}
-{set; ~enemyid; {jget; {jkeys; _raiddata; Enemies}; {get; ~matchidx}}}
-
-{set;~debuff;{if;{argslength};==;2;Default;{func.buffid;{jget;_seed;{args;1}.{get;~match}.area_debuffs.0}}}}
+{if;{argslength};==;2;
+  {set; ~titanname; {shift;{filter;~element;{jvalues; _raiddata; Enemies};{bool;{get;~element};startswith;{capitalize;{args; 0}}}}}}
+  {set; ~matchidx; {indexof; {jvalues; _raiddata; Enemies}; {get; ~titanname}}}
+  {set; ~enemyid; {jget; {jkeys; _raiddata; Enemies}; {get; ~matchidx}}}
+  {set; ~debuff;Default}
+;
+  {set; ~titan; {shift;{filter;~element;{jget; _seed; {args;1}.titans};{bool;{capitalize;{jget;~element;enemy_name}};startswith;{capitalize;{args; 0}}}}}}
+  {set; ~enemyid; {jget; ~titan; enemy_id}}
+  {set; ~debuff;{func.buffid;{jget;~titan;area_debuffs.0}}}
+  {set; ~titanname; {jget; ~titan; enemy_name}}
+}
 
 {jset; _strat; {get;~debuff}.{get; ~enemyid}; {args; {math;-;{argslength};1}}; create}
 
-{output; {get; ~match} {if;{argslength};==;2;Default;{func.debuffformat;{jget;_seed;{args;1}.{get;~match}.area_debuffs.0}}} strategy set to {args; {math;-;{argslength};1}}}
+{output; {get; ~titanname} {if;{argslength};==;2;Default;{func.debuffformat;{jget;~titan;area_debuffs.0}}} strategy set to {args; {math;-;{argslength};1}}}

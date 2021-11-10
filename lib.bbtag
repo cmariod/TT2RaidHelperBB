@@ -46,7 +46,7 @@
   {math;*;100;{parsefloat;{params;0}}}
 }}
 
-{func;titanemoji;{switch;{lower;{params;0}};["1","enemy1","lojak"];<:Lojak:880048138881204244>;["2","enemy2","takedar"];<:Takedar:880048138415652874>;["3","enemy3","jukk"];<:Jukk:880048138600202241>;["4","enemy4","sterl"];<:Sterl:880048138973499392>;["5","enemy5","mohaca"];<:Mohaca:880048138965102622>;["6","enemy6","terro"];<:Terro:880048140135325717>}}
+{func;titanemoji;{switch;{lower;{params;0}};["1","enemy1","lojak"];<:Lojak:880048138881204244>;["2","enemy2","takedar"];<:Takedar:880048138415652874>;["3","enemy3","jukk"];<:Jukk:880048138600202241>;["4","enemy4","sterl"];<:Sterl:880048138973499392>;["5","enemy5","mohaca"];<:Mohaca:880048138965102622>;["6","enemy6","terro"];<:Terro:880048140135325717>;["7","enemy7","klonk"];<:Klonk:907862367935807499>;["8","enemy8","priker"];<:Priker:907862367973556294>}}
 
 {func;jfilterkeys;{set;~filteredkeys;{filter;~element;{jkeys;{params;0}};{bool;{get;~element};{params;1};{params;2}}}}{set;~returnjson;{j;{}}}{foreach;~elem;{get;~filteredkeys};{jset;~returnjson;{get;~elem};{jget;{params;0};{get;~elem}};create}}{get;~returnjson}}
 

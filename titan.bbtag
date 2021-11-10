@@ -28,7 +28,7 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
 }
 
 {//;default strategy}
-{if;{length;{get;_strat}};0;{set;_strat;{j;{"Default":{"Enemy1":"11111111","Enemy2":"11111111","Enemy3":"10111111","Enemy4":"01111111","Enemy5":"10111111","Enemy6":"01111111"}}}}}
+{if;{length;{get;_strat}};0;{set;_strat;{j;{"Default":{"Enemy1":"11111111","Enemy2":"11111111","Enemy3":"10111111","Enemy4":"01111111","Enemy5":"10111111","Enemy6":"01111111","Enemy7":"11111111","Enemy8":"11111111"}}}}}
 
 {if;{argslength};==;1;
   {if;{args; 0};==;default;
@@ -36,7 +36,7 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
     {jset; ~embed; title; Titan Strategy List ;create}
     {jset; ~embed; description; (O)Hit (X)Avoid ;create}
     {set; ~embedfields; []}
-    {for;~index;0;<;6;
+    {for;~index;0;<;8;
       {set; ~embedfield; {j;{}}}
       {set; ~titanstrategy; {split;{regexreplace;{regexreplace;{jget;{jvalues;_strat;Default};{get; ~index}};/1/gi;O};/0/gi;X};}}
       {jset; ~embedfield; name; {jget;_raiddata;Enemies.{jget;{jkeys;_strat;Default};{get; ~index}}} ;create}

@@ -39,7 +39,7 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
     {for;~index;0;<;8;
       {set; ~embedfield; {j;{}}}
       {set; ~titanstrategy; {split;{regexreplace;{regexreplace;{jget;{jvalues;_strat;Default};{get; ~index}};/1/gi;O};/0/gi;X};}}
-      {jset; ~embedfield; name; {jget;_raiddata;Enemies.{jget;{jkeys;_strat;Default};{get; ~index}}} ;create}
+      {jset; ~embedfield; name; {func.titanemoji;{jget;_raiddata;Enemies.{jget;{jkeys;_strat;Default};{get; ~index}}}} {jget;_raiddata;Enemies.{jget;{jkeys;_strat;Default};{get; ~index}}} ;create}
       {jset; ~embedfield; value; {jget;~titanstrategy;2} {jget;~titanstrategy;0} {jget;~titanstrategy;7}{newline}{jget;~titanstrategy;3} {jget;~titanstrategy;1} {jget;~titanstrategy;6}{newline}   {jget;~titanstrategy;4} {jget;~titanstrategy;5} ;create}
       {jset; ~embedfield; inline; true ;create}
       {push; ~embedfields; {get; ~embedfield}}

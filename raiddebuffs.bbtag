@@ -43,7 +43,7 @@ Show all possible debuff for titan (mohaca)
 
 {foreach;~titanname;{sort;{jkeys;~debuff}};
   {set; ~embedfield; {j;{}}}
-  {jset; ~embedfield; name; {substring;{get;~titanname};6} ;create}
+  {jset; ~embedfield; name; {func.titanemoji;{substring;{get;~titanname};6}} {substring;{get;~titanname};6} ;create}
   {jset; ~embedfield; value; {foreach;~debuffname;{jkeys;~debuff;{get;~titanname}};{get;~debuffname}{newline}} ;create}
   {jset; ~embedfield; inline; true ;create}
   {push; ~embedfields; {get; ~embedfield}}

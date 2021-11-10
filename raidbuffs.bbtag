@@ -8,9 +8,6 @@ Example: Show raid seed starting from 3-55
 ```
 }{return}}
 
-{set;~buff;{j;{}}}
-{set;~debuff;{j;{}}}
-
 {set;~isstarted;false}
 {set;~count;0}
 

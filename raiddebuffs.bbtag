@@ -1,0 +1,63 @@
+{execcc;haspermissions}
+{execcc;lib}
+
+{if;{argslength};>;1; {output;
+```
+Example:
+Show all possible debuff for all titan
+{prefix}{commandname}
+
+Show all possible debuff for titan (mohaca)
+{prefix}{commandname} mo
+```
+}{return}}
+
+{if;{argslength};==;1;
+  {set; ~titanname; {shift;{filter;~element;{jvalues; _raiddata; Enemies};{bool;{get;~element};startswith;{capitalize;{args; 0}}}}}}
+}
+
+{set;~debuff;{j;{}}}
+
+{set;~isstarted;false}
+{set;~startingraidtierzone;3-1}
+
+{set; ~embed; {j;{}}}
+{jset; ~embed; title; All Possible Debuff ;create}
+{jset; ~embed; color; 15548997 ;create}
+{set; ~embedfields; []}
+
+{foreach;~raidtierzone;{jvalues;_seed};
+  {if;{jget; ~raidtierzone; tier}-{jget; ~raidtierzone; level};==;{get;~startingraidtierzone};{set;~isstarted;true}}
+  {if;{get;~isstarted};
+    {foreach;~titan;{jget;~raidtierzone;titans};
+      {if;{argslength};==;0;
+        {jset;~debuff;{jget;~titan;enemy_id}{jget;~titan;enemy_name}.{func.debuffformat;{jget;~titan;area_debuffs.0}};1;create}
+      ;
+        {if;{jget;~titan;enemy_name};==;{get;~titanname};
+          {jset;~debuff;{jget;~titan;enemy_id}{jget;~titan;enemy_name}.{func.debuffformat;{jget;~titan;area_debuffs.0}};1;create}
+        }
+      }
+    }
+  }
+}
+
+{foreach;~titanname;{sort;{jkeys;~debuff}};
+  {set; ~embedfield; {j;{}}}
+  {jset; ~embedfield; name; {substring;{get;~titanname};6} ;create}
+  {jset; ~embedfield; value; {foreach;~debuffname;{jkeys;~debuff;{get;~titanname}};{get;~debuffname}{newline}} ;create}
+  {jset; ~embedfield; inline; true ;create}
+  {push; ~embedfields; {get; ~embedfield}}
+}
+
+{//; filler because to fill in nicely 3 x 3 boxes}
+{if;{argslength};==;0;
+  {set; ~embedfield; {j;{}}}
+  {jset; ~embedfield; name; . ;create}
+  {jset; ~embedfield; value; . ;create}
+  {jset; ~embedfield; inline; true ;create}
+  {push; ~embedfields; {get; ~embedfield}}
+}
+
+{jset; ~embed; fields; {get; ~embedfields} ;create}
+
+{output; {embed;{jclean;{get; ~embed}}}}

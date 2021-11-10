@@ -44,6 +44,14 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
       {jset; ~embedfield; inline; true ;create}
       {push; ~embedfields; {get; ~embedfield}}
     }
+
+    {//; filler because to fill in nicely 3 x 3 boxes}
+    {set; ~embedfield; {j;{}}}
+    {jset; ~embedfield; name; . ;create}
+    {jset; ~embedfield; value; . ;create}
+    {jset; ~embedfield; inline; true ;create}
+    {push; ~embedfields; {get; ~embedfield}}
+    
     {jset; ~embed; fields; {get; ~embedfields} ;create}
     {output; {embed;{jclean;{get; ~embed}}}}
     {return}

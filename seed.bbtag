@@ -19,10 +19,6 @@ Example:
 
 {set; ~arg0; {pop;{split;{args; 0};/}}}
 
-{//;auto detection to load discord cdn url straight}
-
-{//;auto detection to accept message link to parse message id and channel id from the url(the last 2 segments)}
-
 {if; {isarray;{messageattachments;{get; ~arg0}}}; ; {set; ~error; Message doesn't have attachment}}
 
 {if; {length; {get; ~error}}; >; 0; {output;Error: {get; ~error}}{return}}

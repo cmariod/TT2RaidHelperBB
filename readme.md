@@ -54,7 +54,7 @@ When you are planning raid for next week post reset, you'll need to load next we
 
 3. When you need to be creative with strategy for titan in a particular raid do so first then rerun `.previewseed` with all same parameters.
 
-4. once you found the zone that fits the bill, executes `.raidzone <tierzone>`, e.g. `.raidzone 3-49`. This will mark the last previewed 3-49 as active started raid, and will enable `.summary` command.
+4. once you found the zone that fits the bill, executes `.raidset <tierzone>`, e.g. `.raidset 3-49`. This will mark the last previewed 3-49 as active started raid, and will enable `.summary` command.
 
 5. `.summary` is to print out predictions on when certain phases will come in the cycle like prism, iv, vm. Optional parameter -d might be used with `.summary` to adjust predictions mid raid with the current trending average in case there's major event like bundle drops or dust promo titan chest opening tournament.
 

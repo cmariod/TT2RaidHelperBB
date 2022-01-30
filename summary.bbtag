@@ -1,6 +1,6 @@
 {execcc;haspermissions}
 
-{ if; {logic; &&; { flagset; h }; {bool; {length; {flagsarray}}; ==; 1}}; {output;
+{ if; { flagset; h }; {output;
 ```
 Parameters:
   -h  Show this help

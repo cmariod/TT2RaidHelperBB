@@ -1,0 +1,96 @@
+{execcc;haspermissions}
+{execcc;lib}
+
+{if;{argslength};==;0;
+```
+Command to set strategy for specific titan. Strategy follows part id sequence: 23456789, refer to part number below, 0 to skip and 1 to kill
+
+    ┌───┐
+┌───┤ 2 ├───┐
+│ 4 ├───┤ 9 │
+├───┤ 3 ├───┤
+│ 5 │   │ 8 │
+└─┬─┴─┬─┴─┬─┘
+  │ 6 │ 7 │
+  └───┴───┘
+
+Usage:
+{prefix}{commandname} {realpad;default;40}: shows default titan strategy for all
+{prefix}{commandname} {realpad;<raid_tier_zone>;40}: shows default titan strategy for specific raid_tier_zone
+{prefix}{commandname} {realpad;<titan_name> [raid_tier_zone] <strategy>;40}: set strategy for particular titan. when raid_tier_zone is not defined, strategy will be set as default
+
+Example to Set Mohaca to not hit chest(3) by default:
+{prefix}{commandname} mo 10111111
+
+Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) and chest(3):
+{prefix}{commandname} mo 4-1 00111111
+```{return}
+}
+
+{//;default strategy}
+{if;{length;{get;_strat}};0;{set;_strat;{j;{"Default":{"Enemy1":"11111111","Enemy2":"11111111","Enemy3":"10111111","Enemy4":"01111111","Enemy5":"10111111","Enemy6":"01111111","Enemy7":"11111111","Enemy8":"11111111"}}}}}
+
+{if;{argslength};==;1;
+  {if;{args; 0};==;default;
+    {set; ~embed; {j;{}}}
+    {jset; ~embed; title; Titan Strategy List ;create}
+    {jset; ~embed; description; (O)Hit (X)Avoid ;create}
+    {set; ~embedfields; []}
+    {for;~index;0;<;8;
+      {set; ~embedfield; {j;{}}}
+      {set; ~titanstrategy; {split;{regexreplace;{regexreplace;{jget;{jvalues;_strat;Default};{get; ~index}};/1/gi;O};/0/gi;X};}}
+      {jset; ~embedfield; name; {func.titanemoji;{jget;_raiddata;Enemies.{jget;{jkeys;_strat;Default};{get; ~index}}}} {jget;_raiddata;Enemies.{jget;{jkeys;_strat;Default};{get; ~index}}} ;create}
+      {jset; ~embedfield; value; {jget;~titanstrategy;2} {jget;~titanstrategy;0} {jget;~titanstrategy;7}{newline}{jget;~titanstrategy;3} {jget;~titanstrategy;1} {jget;~titanstrategy;6}{newline}   {jget;~titanstrategy;4} {jget;~titanstrategy;5} ;create}
+      {jset; ~embedfield; inline; true ;create}
+      {push; ~embedfields; {get; ~embedfield}}
+    }
+
+    {//; filler because to fill in nicely 3 x 3 boxes}
+    {set; ~embedfield; {j;{}}}
+    {jset; ~embedfield; name; . ;create}
+    {jset; ~embedfield; value; . ;create}
+    {jset; ~embedfield; inline; true ;create}
+    {push; ~embedfields; {get; ~embedfield}}
+    
+    {jset; ~embed; fields; {get; ~embedfields} ;create}
+    {output; {embed;{jclean;{get; ~embed}}}}
+    {return}
+  ;
+    {set; ~embed; {j;{}}}
+    {jset; ~embed; title; Titan Strategy List for {args;0};create}
+    {jset; ~embed; description; (O)Hit (X)Avoid ;create}
+    {set; ~embedfields; []}
+    {foreach;~titan;{jget;_seed;{args;0}.titans};
+      {set; ~embedfield; {j;{}}}
+      {set; ~enemyname; {jget;~titan;enemy_name}}
+      {set; ~debuffid; {func.buffid;{jget;~titan;area_debuffs.0}}}
+      {set; ~enemyid; {jget; ~titan; enemy_id}}
+      {set; ~titanstrategy; {split;{func.stratformat;{jget;_strat;{if;{func.jkeyexists;_strat;{get;~debuffid}.{get;~enemyid}};{get;~debuffid};Default}.{get;~enemyid}}};}}
+      {jset; ~embedfield; name; {get; ~enemyname} ;create}
+      {jset; ~embedfield; value; {func.debuffformat;{jget;~titan;area_debuffs.0}}{newline}{jget;~titanstrategy;2} {jget;~titanstrategy;0} {jget;~titanstrategy;7}{newline}{jget;~titanstrategy;3} {jget;~titanstrategy;1} {jget;~titanstrategy;6}{newline}   {jget;~titanstrategy;4} {jget;~titanstrategy;5} ;create}
+      {jset; ~embedfield; inline; true ;create}
+      {push; ~embedfields; {get; ~embedfield}}
+    }
+    {jset; ~embed; fields; {get; ~embedfields} ;create}
+    {output; {embed;{jclean;{get; ~embed}}}}
+    {return}
+  }
+}
+
+{if; {length; {args; {math;-;{argslength};1}}}; !=; 8; {output; Missing part in strategy}{return}}
+
+{if;{argslength};==;2;
+  {set; ~titanname; {shift;{filter;~element;{jvalues; _raiddata; Enemies};{bool;{get;~element};startswith;{capitalize;{args; 0}}}}}}
+  {set; ~matchidx; {indexof; {jvalues; _raiddata; Enemies}; {get; ~titanname}}}
+  {set; ~enemyid; {jget; {jkeys; _raiddata; Enemies}; {get; ~matchidx}}}
+  {set; ~debuff;Default}
+;
+  {set; ~titan; {shift;{filter;~element;{jget; _seed; {args;1}.titans};{bool;{capitalize;{jget;~element;enemy_name}};startswith;{capitalize;{args; 0}}}}}}
+  {set; ~enemyid; {jget; ~titan; enemy_id}}
+  {set; ~debuff;{func.buffid;{jget;~titan;area_debuffs.0}}}
+  {set; ~titanname; {jget; ~titan; enemy_name}}
+}
+
+{jset; _strat; {get;~debuff}.{get; ~enemyid}; {args; {math;-;{argslength};1}}; create}
+
+{output; {get; ~titanname} {if;{argslength};==;2;Default;{func.debuffformat;{jget;~titan;area_debuffs.0}}} strategy set to {args; {math;-;{argslength};1}}}

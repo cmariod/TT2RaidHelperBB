@@ -1,11 +1,21 @@
 {execcc;haspermissions}
 
+{ if; {logic; ||; { flagset; h }; {bool; {length; {flagsarray}}; ==; 1}}; {output;
+```
+Parameters:
+  -h  Show this help
+  -d  {realpad;<buffedclanaverage>;25} BUFFed clan average, e.g. 5.5
+  -x  {realpad;Where x is between 1 to 8;25} This will set full void for the particular titan in sequence
+      e.g. -1 -4 ==> Full void for terro at position 1, 4
+```
+}{return}}
+
 {if; {length; {get; _raidtierzone}}; ==; 0; {output;Raid not set, please {prefix}raidset first}}
 
 {set; ~summarydata; {jclean;{jget; _cache; {get; _raidtierzone}}}}
 {set; ~computeddata; {jclean;{jget; _cache; {get; _raidtierzone}.computed}}}
 
-{// calculate cycle prediction here}
+{//; calculate cycle prediction here}
 {set; ~raidtier; {shift; {split; {get; _raidtierzone}; -}}}
 {if; {get; ~raidtier}; ==; 4;
   {set; ~hitspercycle; 5}
@@ -129,7 +139,7 @@
       
       {push; ~cyclesteps; {repeat;{space};6}{get; ~emoji} {get; ~hitcycleprcnt} ({ceil;{get;~totalhitsincycle}}){space}}
     ;
-      {// next cycle}
+      {//; next cycle}
       {//push; ~cyclesteps; {repeat;{space};6}{get; ~emoji} {get; ~hitcycleprcnt} ({ceil;{get;~totalhitsincycle}}){space}}
       
       {decrement; ~hitsusedlabel; {get;~cycleremaininghits}; false}

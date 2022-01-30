@@ -53,7 +53,7 @@ default morale 10% with same buff debuff and strat:
 {prefix}{commandname} -r 3-49 -d 5.5 -b spe -1 afc -2 bsd -3 rd -s 31123```
 }{return}}
 
-{set; ~iscacheexpired; {bool;!=; {time;YYYYWW}; {get; _raidpreviewlastrun}}} {// if cached data is on different week}
+{set; ~iscacheexpired; {bool;!=; {time;YYYYWW}; {get; _raidpreviewlastrun}}} {//; if cached data is on different week}
 
 {set; ~error;}
 {if; {flagset;r}; {set; ~raidtierzone; {flag; r}}; {set; ~error; {get; ~error}{newline}r parameter required } }
@@ -135,7 +135,7 @@ default morale 10% with same buff debuff and strat:
   }
 }}
 
-{// get buff text}
+{//; get buff text}
 {set; ~raidbuffacro; {get; ~raidbuff} }
 {set; ~raidbuffindex; {shift;{filter;~element;{jkeys;_raiddata;Buffs};{bool;{get;~element};startswith;{get; ~raidbuffacro}|}}} }
 {set; ~raidbufftext; {pop;{split;{get;~raidbuffindex};|}} }
@@ -144,7 +144,7 @@ default morale 10% with same buff debuff and strat:
 {jset; _cache ; {get; ~raidtierzone}.computed.buff.text; {get;~raidbufftext}; create}
 {jset; _cache ; {get; ~raidtierzone}.computed.buff.tab; {get;~raidbufftab}; create}
 
-{// get seed and titan name}
+{//; get seed and titan name}
 {set; ~raidtierzonedata; {jget;_raiddata;Seeds.{get; ~raidtierzone}} }
 {set; ~raidbasehp; {jget;~raidtierzonedata;BaseHP}}
 {jset; _cache ; {get; ~raidtierzone}.computed.basehp; {parseint;{get;~raidbasehp}}; create}
@@ -155,7 +155,7 @@ default morale 10% with same buff debuff and strat:
   {set; ~raidenemy{get;~enemyid}hp; 0}
   {set; ~raidenemy{get;~enemyid}hptab; {jget;_raiddata;HPs.Enemy{get;~enemyid}} }
   
-  {// split debuff [acro|titans strat], if | doesn't exists load default strat}
+  {//; split debuff [acro|titans strat], if | doesn't exists load default strat}
   {if;{bool;>;{indexof;{get; ~raidtitan{get;~index}};|};-1};
     {set; ~raidtitan{get;~index}strat; {pop;{split;{get;~raidtitan{get;~index}};|}} }
     {set; ~raiddebuff{get;~index}acro; {shift;{split;{get;~raidtitan{get;~index}};|}} }
@@ -165,18 +165,18 @@ default morale 10% with same buff debuff and strat:
   }
   {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.strat; {get;~raidtitan{get;~index}strat}; create}
   
-  {// get debuff text}
+  {//; get debuff text}
   {set; ~raiddebuff{get;~index}index; {shift;{filter;~element;{jkeys;_raiddata;Debuffs };{bool;{get;~element};startswith;{get; ~raiddebuff{get;~index}acro}|}}} }
   {set; ~raiddebuff{get;~index}text; {pop;{split;{get;~raiddebuff{get;~index}index};|}} }
   {set; ~raiddebuff{get;~index}tab; {jget; _raiddata; Debuffs.{get;~raiddebuff{get;~index}index}} }
   {jset; _cache; {get; ~raidtierzone}.computed.debuff{get;~index}.text; {get;~raiddebuff{get;~index}text}; create}
   {jset; _cache; {get; ~raidtierzone}.computed.debuff{get;~index}.tab; {get;~raiddebuff{get;~index}tab}; create}
   
-  {// get each titan name}
+  {//; get each titan name}
   {set; ~raidtitan{get;~index}name; {jget;_raiddata;Enemies.Enemy{get; ~enemyid}} }
   {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.name; {get;~raidtitan{get;~index}name}; create}
   
-  {// init for titanhp & mod}
+  {//; init for titanhp & mod}
   {set; ~raidenemy{get;~enemyid}hp; {get; ~raidbasehp}}
   {set; ~raidenemy{get;~enemyid}hpprcnt; {parsefloat; 0}}
   {set; ~raidenemy{get;~enemyid}hpprcntb; {parsefloat; 0}}
@@ -184,7 +184,7 @@ default morale 10% with same buff debuff and strat:
   {set; ~raidenemy{get;~enemyid}mod; {parsefloat; 0}}
   
   {for;~partid;2;<;10;
-    {// get body part %}
+    {//; get body part %}
     {set; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}b; {math; *; 
       {jget; ~raidenemy{get; ~enemyid}hptab; {get; ~partid}b};
       {parsefloat; {jget; ~raiddebuff{get;~index}tab; {get; ~partid}bh}};
@@ -197,7 +197,7 @@ default morale 10% with same buff debuff and strat:
       }
     }}
     {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.partb.{get;~partid}; {parsefloat;{get;~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}b}}; create}
-    {// get armor part %}
+    {//; get armor part %}
     {set; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}a; {math; *; 
       {jget; ~raidenemy{get; ~enemyid}hptab; {get; ~partid}a};
       {parsefloat; {jget; ~raiddebuff{get;~index}tab; {get; ~partid}ah}};
@@ -211,22 +211,22 @@ default morale 10% with same buff debuff and strat:
     }}
     {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.parta.{get;~partid}; {parsefloat;{get; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}a}}; create}
     
-    {// increment total hp}
+    {//; increment total hp}
     {increment; ~raidenemy{get; ~enemyid}hp; {math;*; 
       {get; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}a}; 
       {parsefloat; {get; ~raidbasehp}}
     }}
     
-    {// increment hp prcnt body, to check if titan will die basedon strategy}
+    {//; increment hp prcnt body, to check if titan will die basedon strategy}
     {increment; ~raidenemy{get; ~enemyid}hpprcntb; {get; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}b}; false}
     
-    {// increment total hp %}
+    {//; increment total hp %}
     {increment; ~raidenemy{get; ~enemyid}hpprcnt; {math;+; 
       {get; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}b}; 
       {get; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}a} 
     }; false}
     
-    {// get mod from buff and debuff combo for parts, refer to sheet `TitanModCalculator` for clearer view }
+    {//; get mod from buff and debuff combo for parts, refer to sheet `TitanModCalculator` for clearer view }
     {set; ~raidbuffdebuff{get;~partid}modb; {math;+;
       {parsefloat; {jget; ~raidbufftab; {get;~partid}bd}};
       {parsefloat; {jget; ~raiddebuff{get;~index}tab; {get;~partid}bd}};
@@ -249,7 +249,7 @@ default morale 10% with same buff debuff and strat:
         {get; ~raidenemy{get; ~enemyid}hppartprcnt{get;~partid}a}
       }
     }; false}
-  }{// end of parts loop}
+  }{//; end of parts loop}
   
   {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.tempmod; {parseint;{get;~raidenemy{get;~enemyid}mod}}; create}
   {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.hp; {parseint;{get;~raidenemy{get; ~enemyid}hp}}; create}
@@ -279,16 +279,16 @@ default morale 10% with same buff debuff and strat:
   
   {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.mod; {get;~raidenemy{get;~enemyid}finalmod}; create}
   
-  {// validate body HP, to make sure titan is dead with the strat}
+  {//; validate body HP, to make sure titan is dead with the strat}
   {if; ~raidenemy{get; ~enemyid}hpprcntb; <; 1.0;
-    {// unset computed value}
+    {//; unset computed value}
     {jset; _cache; {get; ~raidtierzone}.computed}
     {output; Error: {get;~raidtitan{get;~index}name} will not die with this strategy}
   }
   
-  {// prep for summary}
+  {//; prep for summary}
   
-  {// get limbs}
+  {//; get limbs}
   {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.limbsprcntb; 
     {math;+; 
       {get; ~raidenemy{get; ~enemyid}hppartprcnt4b};
@@ -310,7 +310,7 @@ default morale 10% with same buff debuff and strat:
     }
   ; create}
   
-  {// find vm part}
+  {//; find vm part}
   {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.vm.hpprcntb; 
     {max;{jvalues;_cache;{get; ~raidtierzone}.computed.titan{get;~index}.partb}}
   ; create}
@@ -324,11 +324,11 @@ default morale 10% with same buff debuff and strat:
     {parsefloat;{get; ~raidenemy{get; ~enemyid}hppartprcnt{jget;_cache;{get; ~raidtierzone}.computed.titan{get;~index}.vmpartid}a}}
   ; create}
   
-  {// init for loop below}
+  {//; init for loop below}
   {set; ~raidtitan{get;~index}qty; 0 }
 }
 
-{// get mod}
+{//; get mod}
 {set; ~raidhpprcnt; 0}
 {set; ~raidmod; 0}
 {set; ~titansequence; {split; {get; ~titansequence};}}
@@ -393,7 +393,7 @@ default morale 10% with same buff debuff and strat:
     {parseint; {get; _membercount}}
   }
 }}
-{// average needed to 6 cycle}
+{//; average needed to 6 cycle}
 {set; ~avgneeded; {math;/;
   {parseint; {get;~raiddamageneeded}};
   {math;*;
@@ -403,7 +403,7 @@ default morale 10% with same buff debuff and strat:
   }
 }}
 
-{// ---------------------------- all output below}
+{//; ---------------------------- all output below}
 
 {output;```Preview:{realpad;{get; ~raidtierzone};4} Mor:{realpad;{get; _raidmorale}%;5;{space};left} UAvg:{realpad;{numformat;{get; _raidunbuffedavg};2}M;6;{space};left}{for;~index;1;<;4;{ set; ~enemyid; {jget;~raidtierzonedata;Titan{get;~index}}}
 {realpad;{get; ~raidtitan{get;~index}name};7} x{get; ~raidtitan{get;~index}qty} -{realpad;{get; ~raiddebuff{get;~index}acro};6}{realpad;{numformat;{get; ~raidenemy{get;~enemyid}finalmod};2};5}HP{realpad;{numformat;{math;/;{get;~raidenemy{get;~enemyid}hp};1000000};2}M;9;{space};left}

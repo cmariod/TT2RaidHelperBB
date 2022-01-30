@@ -9,12 +9,13 @@ Usage:
 
 Example:
 {prefix}{commandname} 3-49
+```{return}
 }
 
-{set; ~iscacheexpired; {bool;!=; {time;YYYYWW}; {get; _raidpreviewlastrun}}} {// if cached data is on different week}
+{set; ~iscacheexpired; {bool;!=; {time;YYYYWW}; {get; _raidpreviewlastrun}}} {//; if cached data is on different week}
 {set; ~arg0; {jget; {argsarray}; 0}}
 
-{// check if data exists in cache and cache is recent}
+{//; check if data exists in cache and cache is recent}
 {if; {logic;||;
   {get; ~iscacheexpired};
   {bool;

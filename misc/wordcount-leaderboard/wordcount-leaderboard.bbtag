@@ -1,0 +1,21 @@
+{func;jkeyexists;{set;~path;{split;{params;1};.}}{set;~key;{pop;~path}}{set;~path;{join;~path;.}}{bool;{indexof;{jkeys;{params;0};{get;~path}};{get;~key}};!=;-1}}
+{func;arraysum;{set;~temp;0}{foreach;~item;{params;0};{void;{increment;~temp;{get;~item}}}}{get;~temp}}
+
+{set;~channelid;857308612437999656}
+{set;~keyword;test}
+
+{if;{length;{get;_leaderboard{get;~keyword}}};0;{set;_leaderboard{get;~keyword};{j}}}
+{set;~count;{if;{func.jkeyexists;_leaderboard{get;~keyword};{sender}.count};{jget;_leaderboard{get;~keyword};{sender}.count};0}}
+{increment;~count;{length;{regexmatch;{messagetext};/test/ig}}}
+{jset;_leaderboard{get;~keyword};{sender}.player;{sender};create}
+{jset;_leaderboard{get;~keyword};{sender}.count;{get;~count};create}
+
+{set;~leaderboardtext;```{capitalize;{get;~keyword}} Leaderboard{newline}{foreach;~item;{jsort;{jvalues;_leaderboard{get;~keyword}};count;descending};{substring;{realpad;{username;{jget;~item;player}};35};0;34} {realpad;{jget;~item;count};5;{space};left}{newline}}```}
+
+{if;{length;{get;_leaderboard{get;~keyword}msgid}};>;0;
+  {edit;{get;~channelid};{get;_leaderboard{get;~keyword}msgid};{get;~leaderboardtext}}
+;
+  {set;_leaderboard{get;~keyword}msgid;{send;{get;~channelid};{get;~leaderboardtext}}}
+}
+
+{output;{capitalize;{get;~keyword}} counter: {func.arraysum;{map;~item;{jvalues;_leaderboard{get;~keyword}};{jget;~item;count}}}}

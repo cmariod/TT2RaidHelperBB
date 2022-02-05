@@ -19,6 +19,7 @@ Or you can manually do that in discord by executing command below, replace comma
 
 ## Required CC
 - .haspermissions
+- .lib
 - .loadraiddata
 - .seed
 - .previewseed
@@ -61,3 +62,12 @@ When you are planning raid for next week post reset, you'll need to load next we
 ## Help
 
 General help of each command can be read by either running the command with no parameter (generally) or with -h if that doesn't work. This is because `.summary` is designed to run without parameters by default.
+
+## Customizing Buff & Debuff Mod
+
+Buff and Debuff that contains Burst, Affliction, Chance and Duration are tricky to formulate, so their mod value are based on assumption of 50/50 distribution between affliction damage and burst damage for the whole clan and I ran raid sim with this configuration against 7 part titan, 6 part void and check the difference between buffed/debuffed and unbuffed. If you disagree with my method or your clan happens not to be affliction heavy or burst heavy and need to customise it, you can do so.
+
+- to get current mod value: `.cc test {jget;_raiddata;Buffs.bsc|BurstChance|+25% All Burst Chance.DamageMod}`. Will give you 1.084705882352941 by default
+- to set a new one: .cc test {jset;_raiddata;Buffs.bsc|BurstChance|+25% All Burst Chance.DamageMod;1.1}
+- to get list of known buff in db: .cc test {jkeys;_raiddata;Buffs}
+- to get list of known debuff in db: .cc test {jkeys;_raiddata;Debuffs}

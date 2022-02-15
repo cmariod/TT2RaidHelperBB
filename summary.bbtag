@@ -33,11 +33,6 @@ Parameters:
 };1000000}} {jset; _cache; summary.bavg; {get; ~bavg}; create}
 {set; ~titansequence; {split;{jget; ~summarydata; flags};}}
 {set; ~totaltitans; {length;{get;~titansequence}}}
-{set; ~basehp; {jget; ~computeddata; basehp}} {jset; _cache; summary.basehp; {get; ~basehp}; create}
-{set; ~basehphits; {math;/;
-  {parsefloat;{get;~basehp}};
-  {parsefloat;{get;~bavg}}
-}} {jset; _cache; summary.basehphits; {get; ~basehphits}; create}
 {set; ~totalhitpercycle; {math;*;{get; _activeraidpower};{get;~hitspercycle}}}
 
 {set; ~overflowdmg; 0}
@@ -53,6 +48,12 @@ Parameters:
 {for;~index;0;<;{get; ~totaltitans};
   {set; ~enemyid; {jget;~titansequence;{get;~index}}}
   {set; ~titanhp; {jget; ~computeddata; titan{get;~enemyid}.hp}}
+
+  {set; ~basehp; {jget; ~computeddata; titan{get;~enemyid}.basehp}}
+  {set; ~basehphits; {math;/;
+    {parsefloat;{get;~basehp}};
+    {parsefloat;{get;~bavg}}
+  }}
 
   {jset; ~cycledetails; {get;~currentcycle}.titans.{get;~index}.label; {jget; ~computeddata; titan{get;~enemyid}.name}; create}
   
@@ -140,7 +141,7 @@ Parameters:
       {push; ~cyclesteps; {repeat;{space};6}{get; ~emoji} {get; ~hitcycleprcnt} ({ceil;{get;~totalhitsincycle}}){space}}
     ;
       {//; next cycle}
-      {//push; ~cyclesteps; {repeat;{space};6}{get; ~emoji} {get; ~hitcycleprcnt} ({ceil;{get;~totalhitsincycle}}){space}}
+      {//; push; ~cyclesteps; {repeat;{space};6}{get; ~emoji} {get; ~hitcycleprcnt} ({ceil;{get;~totalhitsincycle}}){space}}
       
       {decrement; ~hitsusedlabel; {get;~cycleremaininghits}; false}
       {decrement; ~totalhitsincycle; {get; ~totalhitpercycle}; false}

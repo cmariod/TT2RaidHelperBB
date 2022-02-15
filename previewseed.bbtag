@@ -153,6 +153,7 @@ Related commands:
   
   // get each titan hp
   {set; ~raid{get;~enemyid}basehp; {jget;~currtitan;total_hp}}
+  {jset; _cache; {get; ~raidtierzone}.computed.titan{get;~index}.basehp; {get; ~raid{get;~enemyid}basehp}; create}
   {//; set; ~raid{get;~enemyid}hptab; {jget;_raiddata;HPs.{get;~enemyid}} }
   {set; ~raid{get;~enemyid}hptab; {j;{}}}
   {foreach;~elem;{get;~raidtitanparts{get;~index}};

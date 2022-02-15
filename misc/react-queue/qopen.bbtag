@@ -1,0 +1,11 @@
+{execcc;haspermissions}
+
+{if;{length; {argsarray}};0; {output;
+```
+Example: {prefix}qopen message
+```
+}{return}}
+
+{delete}
+{set;_q{category}msgid;{output;{join;{argsarray};{space}}. React ✋ here to get in line.}}
+{reactadd;{get;_q{category}msgid};✋}

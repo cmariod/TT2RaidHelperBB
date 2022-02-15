@@ -1,0 +1,38 @@
+{execcc;haspermissions}
+
+{func;jkeyexists;{set;~path;{split;{params;1};.}}{set;~key;{pop;~path}}{set;~path;{join;~path;.}}{bool;{indexof;{jkeys;{params;0};{get;~path}};{get;~key}};!=;-1}}
+
+{if;{length; {argsarray}};0; {output;
+```
+Example: {prefix}qcall 10
+```
+}{return}}
+
+{set;~total;{parseint;{join;{argsarray};}}}
+
+{if;{get;~total};==;NaN;{return}}
+
+{set;~q{category}reactuserid;{j}}
+{if;{isarray;{reactlist;{get;_q{category}msgid}}};
+  {delete}
+  
+  {foreach;~reactemoji;{reactlist;{get;_q{category}msgid}};
+    {foreach;~emojiuser;{reactlist;{get;_q{category}msgid};{get;~reactemoji}};
+      {if;{get;~emojiuser};==;{sender;{get;_q{category}msgid}};
+        {//; ignore blarg user id from default reaction}
+      ;
+        {if;{func.jkeyexists;~q{category}reactuserid;{get;~emojiuser}};
+          {//; do nothing if exists}
+        ;
+          {jset;~q{category}reactuserid;{get;~emojiuser};{get;~reactemoji};create}
+        }
+      }
+    }
+  }
+  
+  {set;~drawpool;{shuffle;{jkeys;~q{category}reactuserid}}}
+  {if;{length;{get;~drawpool}};<;{get;~total};{set;~total;{length;{get;~drawpool}}}}
+  {reactadd;{output;{get;~total} lucky people:{newline}{foreach;~luckyuser;{slice;{get;~drawpool};0;{get;~total}};
+    {void;{reactremove;{get;_q{category}msgid};{get;~luckyuser};{jget;~q{category}reactuserid;{get;~luckyuser}}}}{usermention;{get;~luckyuser}}{get;~luckyuser}{newline}
+  }{newline}React ✅ here when done};✅}
+;{output;No Queue Opened}{return}}

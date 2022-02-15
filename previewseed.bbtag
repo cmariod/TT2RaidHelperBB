@@ -127,8 +127,6 @@ Related commands:
 
 {//; get seed and titan name}
 {set; ~raidtierzonedata; {jget;_raiddata;Seeds.{get; ~raidtierzone}} }
-{set; ~raidbasehp; {jget;~seedtierzone;titans.0.total_hp}}
-{jset; _cache ; {get; ~raidtierzone}.computed.basehp; {parseint;{get;~raidbasehp}}; create}
 {set; ~titans; {jget; ~seedtierzone; titans}}
 {for;~index;1;<;4;
   {set; ~currtitan; {jget; ~titans; {math;-;{get;~index};1}}}
@@ -331,7 +329,7 @@ Related commands:
 }
 
 {//; get mod}
-{set; ~raidhpprcnt; 0}
+{set; ~raidtotalhp; 0}
 {set; ~raidmod; 0}
 {for;~index;0;<;{length; {get; ~seedsequence}};
   {set; ~titanid; {jget;~seedsequence;{get;~index}}}
@@ -339,8 +337,8 @@ Related commands:
   {set; ~enemyid; {jget;~currtitan;enemy_id} }
   {increment; ~raidtitan{get;~titanid}qty}
   
-  {set; ~titaneffectivehp; {math;+; {jget; _cache; {get; ~raidtierzone}.computed.titan{get;~titanid}.hpprcnta}; {parsefloat; 1.0}}}
-  {increment; ~raidhpprcnt; {get; ~titaneffectivehp}; false}
+  {set; ~titaneffectivehp; {math;*; {jget; _cache; {get; ~raidtierzone}.computed.titan{get;~titanid}.hpprcnte}; {get;~raid{get;~enemyid}basehp}}}
+  {increment; ~raidtotalhp; {get; ~titaneffectivehp}; false}
   {increment; ~raidmod; {math;*;
     {get; ~titaneffectivehp};
     {get; ~raid{get;~enemyid}finalmod}
@@ -349,13 +347,12 @@ Related commands:
 
 {set; ~raidmod; {math;/;
   {get; ~raidmod};
-  {get; ~raidhpprcnt}
+  {get; ~raidtotalhp}
 }}
 {increment; ~raidmod; {math;/; {get; _raidmorale}; 100}; false}
 {jset; _cache ; {get; ~raidtierzone}.computed.raidmod; {get; ~raidmod}; create}
 
-{set; ~raiddamageneeded; {math;*; {get; ~raidhpprcnt}; {get; ~raidbasehp}}}
-{jset; _cache ; {get; ~raidtierzone}.computed.damageneeded; {parseint;{get; ~raiddamageneeded}}; create}
+{jset; _cache ; {get; ~raidtierzone}.computed.damageneeded; {parseint;{get; ~raidtotalhp}}; create}
 
 {set; ~raidbuffedavg; {math;*; 
   {get; ~raidmod}; 
@@ -364,7 +361,7 @@ Related commands:
 {jset; _cache ; {get; ~raidtierzone}.computed.bavg; {get; ~raidbuffedavg}; create}
 
 {set; ~raidhits; {ceil; {math;/;
-  {get; ~raiddamageneeded};
+  {get; ~raidtotalhp};
   {math;*;
     {get; ~raidbuffedavg};
     1000000
@@ -397,7 +394,7 @@ Related commands:
 }}
 {//; average needed to 6 cycle}
 {set; ~avgneeded; {math;/;
-  {parseint; {get;~raiddamageneeded}};
+  {parseint; {get;~raidtotalhp}};
   {math;*;
     {parseint; {get; ~hitspercycle}};
     {parseint; {get; _membercount}};
@@ -428,7 +425,7 @@ Related commands:
 {set; ~embedfield; {j;{}}}
 {jset; ~embedfield; name; **Raid Stats** ;create}
 {jset; ~embedfield; value; {clean;
-  Total HP: {numformat;{math;/;{get;~raiddamageneeded};1000000};2}M
+  Total HP: {numformat;{math;/;{get;~raidtotalhp};1000000};2}M
   Min Buffed Avg: {numformat;{math;/;{get; ~avgneeded}; 1000000};2;;,}M
 };create}
 {jset; ~embedfield; inline; true ;create}

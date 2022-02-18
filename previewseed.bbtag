@@ -461,7 +461,7 @@ Related commands:
     HP: {realpad;{numformat;{math;/;{get;~raid{get;~enemyid}hp};1000000};2}M;9;{space};left}
     Debuff: {get;~raiddebuff{get;~index}text}
     TitanMod: {numformat;{get; ~raid{get;~enemyid}finalmod};2} *(Curse: -{numformat;{math;-;1;{get;~cursemod{get;~index}}};2})*
-    }{if;{length;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.parts}};>;0;{if;{flagset;s};{newline}Curse: {func.truncaffl;{shift;{match;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.bonus_type};/[A-Z]+[a-z]+/g}}} ({join;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.parts};,});{clean;
+    }{if;{length;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.parts}};>;0;{if;{flagset;s};{newline}Curse: {func.truncaffl;{shift;{match;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.bonus_type};/[A-Z]+[a-z]+/g}}} ({join;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.parts};,}){newline}Strat: {get; ~raidtitan{get;~index}strat};{clean;
       {newline}Curse (x{length;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.parts}}): {get;~cursename}
       }{newline}**Curse**
 {jget;~curseparts;2} {jget;~curseparts;0} {jget;~curseparts;7}

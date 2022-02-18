@@ -5,4 +5,4 @@
     {request; https://raw.githubusercontent.com/cmariod/TT2RaidHelperBB/master/examples/raiddata.json }
   ; body}}
 }
-{if;{md5; {get; _raiddata}}; ==; 53bdf9538f60332ebbdd10ca28b82969; {output;Done!}; {output;Hmm something went wrong!}}
+{if;{md5; {get; _raiddata}}; ==; 7843e1c33f81adb30fc64fef6f88ff86; {output;Done!}; {output;Hmm something went wrong!}}

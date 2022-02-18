@@ -71,3 +71,7 @@ Buff and Debuff that contains Burst, Affliction, Chance and Duration are tricky 
 - to set a new one: .cc test {jset;_raiddata;Buffs.bsc|BurstChance|+25% All Burst Chance.DamageMod;1.1}
 - to get list of known buff in db: .cc test {jkeys;_raiddata;Buffs}
 - to get list of known debuff in db: .cc test {jkeys;_raiddata;Debuffs}
+
+## Manual Patch to 5.1.4
+
+New command (patch514.bbtag) added as a manual patch of raiddata from 5.1.3 to 5.1.4, to preserve any other custom raiddata that is modified manually. Alternatively can update loadraiddata command and rerun it to load the new raiddata.

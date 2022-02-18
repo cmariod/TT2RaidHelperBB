@@ -41,7 +41,7 @@ Set up a new hidden/dummy channel to subscribe to GH weekly seed. Whenever you w
 
 Titan default strategy, if you think that you are adopting unorthodox strategy for particular titan, you should check and probably change `.titan default` this will list the default strategy for each titan ignoring debuff.
 
-When you need to be creative to be efficient in killing certain titan like mohaca limbs only in let's say raid 4-4. You can check if the strategy for that debuff by running `.titan 4-4`. Default mohaca is to attack head and for this debuff you don't have to attack head, so run `.titan moh 4-4 00111111` then run `.titan 4-4` to confirm. The shortform of titan name can be 2 or more characters so long match the starting of titan name. And that will set the strategy for any zone with that debuff.
+When you need to be creative to be efficient in killing certain titan like mohaca limbs only in let's say raid 4-4. You can check the strategy for that debuff by running `.titan 4-4`. This command will show you buff, debuff, hp for each titan part, base hp, etc. Default mohaca is to attack head and after you figure out that for this debuff you don't have to attack head, so run `.titan moh 4-4 00111111` to update strategy for this debuff then run `.titan 4-4` to confirm if settings are saved. The shortform of titan name can be 2 or more characters so long match the starting of titan name. And this command will set the strategy for all zone with the same titan and debuff.
 
 ## Operations
 
@@ -53,7 +53,7 @@ When you are planning raid for next week post reset, you'll need to load next we
 
 2. `.previewseed` to simulate your raid in particular zone with the default titan strategy. e.g. `.previewseed -r 4-25 -d 16.25 -m 45` will simulate 4-25 with 16.25 unbuffed average with 45% morale. There's no mechanics to adopt team tactics, but generally adding extra the average would work. Example if you use tactics for first 3 cycle in 6 cycle raid = 0 2 4 4 4 4 it will average to additional 3% per cycle, and with max starting morale (45%) you should get quite accurate estimate with 48%. *at least this works for me*
 
-3. When you need to be creative with strategy for titan in a particular raid do so first then rerun `.previewseed` with all same parameters.
+3. When you need to be creative with strategy for particular titan in the choosen raid this is the time to do so, then rerun `.previewseed` with all same parameters afterwards.
 
 4. once you found the zone that fits the bill, executes `.raidset <tierzone>`, e.g. `.raidset 3-49`. This will mark the last previewed 3-49 as active started raid, and will enable `.summary` command.
 

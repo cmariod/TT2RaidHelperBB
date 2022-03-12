@@ -17,7 +17,7 @@
 }}
 
 {func;debuffformat;{clean;
-  {set;~percent;{func.topercent;{jget; {params;0}; bonus_amount}}}{if;{jget; {params;0}; bonus_type};endswith;HPMult;+{get;~percent};{if;{get;~percent};>;0;{math;-;{get;~percent};100};{get;~percent}}}% {func.camelcasespacer;{jget; {params;0}; bonus_type}}
+  {set;~percent;{func.topercent;{jget; {params;0}; bonus_amount}}}{if;{jget; {params;0}; bonus_type};endswith;HPMult;{if;{get;~percent};>;0;+{get;~percent};{get;~percent}};{if;{get;~percent};>;0;{math;-;{get;~percent};100};{get;~percent}}}% {func.camelcasespacer;{jget; {params;0}; bonus_type}}
 }}
 
 {func;buffdebuffacro;{join;{slice;{match;{jget; {params;0}; bonus_type};/[A-Z][A-Za-z]/g};0;3};}{jget; {params;0}; bonus_amount}}

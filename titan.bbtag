@@ -18,6 +18,7 @@ Usage:
 {prefix}{commandname} {realpad;default;40}: shows default titan strategy for all
 {prefix}{commandname} {realpad;<raid_tier_zone>;40}: shows default titan strategy for specific raid_tier_zone
 {prefix}{commandname} {realpad;<titan_name> [raid_tier_zone] <strategy>;40}: set strategy for particular titan. when raid_tier_zone is not defined, strategy will be set as default
+{prefix}{commandname} {realpad;<titan_name> <raid_tier_zone> default;40}: set strategy for particular titan and raid_tier_zone back to default strategy
 
 Example to Set Mohaca to not hit chest(3) by default:
 {prefix}{commandname} mo 10111111
@@ -31,7 +32,7 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
 {if;{length;{get;_strat}};0;{set;_strat;{j;{"Default":{"Enemy1":"11111111","Enemy2":"11111111","Enemy3":"10111111","Enemy4":"01111111","Enemy5":"10111111","Enemy6":"01111111","Enemy7":"11111111","Enemy8":"11111111"}}}}}
 
 {if;{argslength};==;1;
-  {if;{args; 0};==;default;
+  {if;{lower;{args; 0}};==;default;
     {set; ~embed; {j;{}}}
     {jset; ~embed; title; Titan Strategy List ;create}
     {jset; ~embed; description; (O)Hit (X)Avoid ;create}
@@ -93,7 +94,7 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
       {jsort;{get;~armor};id}
       
       {set; ~embedfield; {j}}
-      {jset; ~embedfield; name; {func.titanemoji;{get; ~enemyname}} {get; ~enemyname} ;create}
+      {jset; ~embedfield; name; {func.titanemoji;{get; ~enemyname}} {get; ~enemyname} {if; {get; ~totalbody}; <; {get;~basehp}; 🆘} ;create}
       {jset; ~embedfield; value; {func.debuffformat;{jget;~titan;area_debuffs.0}}{newline}{jget;~titanstrategy;2} {jget;~titanstrategy;0} {jget;~titanstrategy;7}{newline}{jget;~titanstrategy;3} {jget;~titanstrategy;1} {jget;~titanstrategy;6}{newline}   {jget;~titanstrategy;4} {jget;~titanstrategy;5}{newline}```Base HP:  {realpad;{numformat;{math;/;{get;~basehp};1000000};2}M;10;{space};left}{newline}Eff Body:  {realpad;{numformat;{math;/;{get;~totalbody};1000000};2}M;9;{space};left}{newline}Eff Armor: {realpad;{numformat;{math;/;{get;~totalarmor};1000000};2}M;9;{space};left}{newline}Total Dmg: {realpad;{numformat;{math;/;{get;~totaldamage};1000000};2}M;9;{space};left}```;create}
       {jset; ~embedfield; inline; true ;create}
       {push; ~embedfields; {get; ~embedfield}}
@@ -120,7 +121,7 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
   }
 }
 
-{if; {length; {args; {math;-;{argslength};1}}}; !=; 8; {output; Missing part in strategy}{return}}
+{set;~stratset;{args; {math;-;{argslength};1}}}
 
 {if;{argslength};==;2;
   {set; ~titanname; {shift;{filter;~element;{jvalues; _raiddata; Enemies};{bool;{get;~element};startswith;{capitalize;{args; 0}}}}}}
@@ -134,6 +135,10 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
   {set; ~titanname; {jget; ~titan; enemy_name}}
 }
 
-{jset; _strat; {get;~debuff}.{get; ~enemyid}; {args; {math;-;{argslength};1}}; create}
+{if; {lower;{get;~stratset}}; ==; default; {set;~stratset; {jget; _strat; Default.{get; ~enemyid}}}}
 
-{output; {get; ~titanname} {if;{argslength};==;2;Default;{func.debuffformat;{jget;~titan;area_debuffs.0}}} strategy set to {args; {math;-;{argslength};1}}}
+{if; {length; {get;~stratset}}; !=; 8; {output; Missing part in strategy}{return}}
+
+{jset; _strat; {get;~debuff}.{get; ~enemyid}; {get;~stratset}; create}
+
+{output; {get; ~titanname} {if;{argslength};==;2;Default;{func.debuffformat;{jget;~titan;area_debuffs.0}}} strategy set to {capitalize;{get;~stratset};lower}}

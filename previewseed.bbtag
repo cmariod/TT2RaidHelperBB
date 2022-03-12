@@ -474,10 +474,10 @@ Related commands:
       {newline}Curse (x{length;{jget; _cache; {get; ~raidtierzone}.curse{get;~index}.parts}}): {get;~cursename}
       }```BaseHP: {realpad;{numformat;{math;/;{get;~raid{get;~enemyid}basehp};1000000};2}M;9;{space};left}
 EffBody: {realpad;{numformat;{math;/;{get;~raid{get;~enemyid}hpb};1000000};2}M;8;{space};left}
-EffArmr: {realpad;{numformat;{math;/;{get;~raid{get;~enemyid}hpa};1000000};2}M;8;{space};left}{newline}{newline}Curse | Strat
-{jget;~curseparts;2} {jget;~curseparts;0} {jget;~curseparts;7} | {jget;~titanstrategy;2} {jget;~titanstrategy;0} {jget;~titanstrategy;7}
-{jget;~curseparts;3} {jget;~curseparts;1} {jget;~curseparts;6} | {jget;~titanstrategy;3} {jget;~titanstrategy;1} {jget;~titanstrategy;6}
- {jget;~curseparts;4} {jget;~curseparts;5}  |  {jget;~titanstrategy;4} {jget;~titanstrategy;5}```
+EffArmr: {realpad;{numformat;{math;/;{get;~raid{get;~enemyid}hpa};1000000};2}M;8;{space};left}{newline}{newline} Curse  |  Strat
+ {jget;~curseparts;2} {jget;~curseparts;0} {jget;~curseparts;7}  |  {jget;~titanstrategy;2} {jget;~titanstrategy;0} {jget;~titanstrategy;7}
+ {jget;~curseparts;3} {jget;~curseparts;1} {jget;~curseparts;6}  |  {jget;~titanstrategy;3} {jget;~titanstrategy;1} {jget;~titanstrategy;6}
+  {jget;~curseparts;4} {jget;~curseparts;5}   |   {jget;~titanstrategy;4} {jget;~titanstrategy;5}```
     ;{newline}```Strategy
 {jget;~titanstrategy;2} {jget;~titanstrategy;0} {jget;~titanstrategy;7}
 {jget;~titanstrategy;3} {jget;~titanstrategy;1} {jget;~titanstrategy;6}

@@ -10,7 +10,7 @@
 {jset;_leaderboard{get;~keyword};{sender}.player;{sender};create}
 {jset;_leaderboard{get;~keyword};{sender}.count;{get;~count};create}
 
-{set;~leaderboardtext;```{capitalize;{get;~keyword}} Leaderboard{newline}{foreach;~item;{jsort;{jvalues;_leaderboard{get;~keyword}};count;descending};{substring;{realpad;{username;{jget;~item;player}};35};0;34} {realpad;{jget;~item;count};5;{space};left}{newline}}```}
+{set;~leaderboardtext;```{capitalize;{get;~keyword}} Leaderboard{newline}{foreach;~item;{jsort;{jvalues;_leaderboard{get;~keyword}};count;descending};{substring;{realpad;{username;{jget;~item;player}};30};0;29} {realpad;{jget;~item;count};5;{space};left}{newline}}```}
 
 {if;{length;{get;_leaderboard{get;~keyword}msgid}};>;0;
   {edit;{get;~channelid};{get;_leaderboard{get;~keyword}msgid};{get;~leaderboardtext}}

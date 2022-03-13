@@ -24,6 +24,7 @@ Or you can manually do that in discord by executing command below, replace comma
 - .seed
 - .previewseed
 - .raidbuffs
+- .raidconfig
 - .raiddebuffs
 - .raidset
 - .summary
@@ -35,7 +36,7 @@ You can get the list of role name and it's id by using `.roles` and copy out the
 
 ## Setup and Titan Strategy
 
-First you'll need to execute `.loadraiddata` to uh load raid data.
+First you'll need to execute `.loadraiddata` to uh load raid data. and then execute `.raidconfig` once, read the help and see if you want to change any config.
 
 Set up a new hidden/dummy channel to subscribe to GH weekly seed. Whenever you want to switch seed, go to this channel and copy the message link and run `.seed <message-link-here>`.
 

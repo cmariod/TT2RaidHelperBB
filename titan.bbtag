@@ -72,46 +72,67 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
 
       {set;~body;[]}
       {set;~armor;[]}
+      {set;~bodypartsonstrat;[]}
+      {set;~raidtitancurseparts; []}
       {set;~totalbody;0}
+      {set;~allbody;0}
       {set;~totalarmor;0}
+      {set;~allarmor;0}
       {foreach;~part;{jget;~titan;parts};
         {set;~partjson;{j}}
         {jset;~partjson;id;{jget;_raiddata;Parts.{jget;~part;part_id}};create}
         {jset;~partjson;hp;{jget;~part;total_hp};create}
 
+        {if;{jget;~part;cursed}; {push;~raidtitancurseparts;{jget;_raiddata;Parts.{jget;~part;part_id}}}}
+
         {if;{jget;~part;part_id};startswith;Body;
           {push;~body;{get;~partjson}}
-          {//; increment;~totalbody;{jget;~part;total_hp};false}
-          {if;{jget;~partstrategy;{substring;{jget;~partjson;id};0;1}};>;0;{increment;~totalbody;{jget;~part;total_hp};false}}
+          {increment;~allbody;{jget;~part;total_hp};false}
+          {if;{jget;~partstrategy;{substring;{jget;~partjson;id};0;1}};>;0;{increment;~totalbody;{jget;~part;total_hp};false}{push;~bodypartsonstrat;{jget;~part;total_hp}}}
         ;
           {push;~armor;{get;~partjson}}
-          {//; increment;~totalarmor;{jget;~part;total_hp};false}
+          {increment;~allarmor;{jget;~part;total_hp};false}
           {if;{jget;~partstrategy;{substring;{jget;~partjson;id};0;1}};>;0;{increment;~totalarmor;{jget;~part;total_hp};false}}
         }
       }
+
+      {sort; ~raidtitancurseparts}
+      {set; ~curseparts; {split;NNNNNNNN;}}
+      {foreach; ~elem; {get; ~raidtitancurseparts};
+        {jset;~curseparts;
+          {math;-;{parseint;{shift;{split;{get;~elem};}}};2}
+        ;C}
+      }
+
       {set;~totaldamage;{math;+;{get;~basehp};{get;~totalarmor}}}
       {jsort;{get;~body};id}
       {jsort;{get;~armor};id}
+
+      {set;~vmbodyhp;{math;-;
+        {max;{get;~bodypartsonstrat}}
+      ;
+        {if;{get;~totalbody};>;{get;~basehp};{math;-;{get;~totalbody};{get;~basehp}};0}
+      }}
       
       {set; ~embedfield; {j}}
-      {jset; ~embedfield; name; {func.titanemoji;{get; ~enemyname}} {get; ~enemyname} {if; {get; ~totalbody}; <; {get;~basehp}; 🆘} ;create}
-      {jset; ~embedfield; value; {func.debuffformat;{jget;~titan;area_debuffs.0}}{newline}{jget;~titanstrategy;2} {jget;~titanstrategy;0} {jget;~titanstrategy;7}{newline}{jget;~titanstrategy;3} {jget;~titanstrategy;1} {jget;~titanstrategy;6}{newline}   {jget;~titanstrategy;4} {jget;~titanstrategy;5}{newline}```Base HP:  {realpad;{numformat;{math;/;{get;~basehp};1000000};2}M;10;{space};left}{newline}Eff Body:  {realpad;{numformat;{math;/;{get;~totalbody};1000000};2}M;9;{space};left}{newline}Eff Armor: {realpad;{numformat;{math;/;{get;~totalarmor};1000000};2}M;9;{space};left}{newline}Total Dmg: {realpad;{numformat;{math;/;{get;~totaldamage};1000000};2}M;9;{space};left}```;create}
+      {jset; ~embedfield; name; {func.titanemoji;{get; ~enemyname}} {get; ~enemyname} ({func.curseacro;{jget;~titan;cursed_debuffs.0}} Cursed) {if; {get; ~totalbody}; <; {get;~basehp}; 🆘} ;create}
+      {jset; ~embedfield; value; {func.debuffformat;{jget;~titan;area_debuffs.0}}``` {jget;~curseparts;2} {jget;~curseparts;0} {jget;~curseparts;7}    |    {jget;~titanstrategy;2} {jget;~titanstrategy;0} {jget;~titanstrategy;7}{newline} {jget;~curseparts;3} {jget;~curseparts;1} {jget;~curseparts;6}    |    {jget;~titanstrategy;3} {jget;~titanstrategy;1} {jget;~titanstrategy;6}{newline}  {jget;~curseparts;4} {jget;~curseparts;5}     |     {jget;~titanstrategy;4} {jget;~titanstrategy;5}{newline}Base HP:  {realpad;{numformat;{math;/;{get;~basehp};1000000};2}M;11;{space};left}{newline}Eff Body:  {realpad;{numformat;{math;/;{get;~totalbody};1000000};2}M;10;{space};left}{newline}Eff Armor: {realpad;{numformat;{math;/;{get;~totalarmor};1000000};2}M;10;{space};left}{newline}Eff VMBody: {realpad;{numformat;{math;/;{get;~vmbodyhp};1000000};2}M;9;{space};left}{newline}Total Dmg: {realpad;{numformat;{math;/;{get;~totaldamage};1000000};2}M;10;{space};left}```;create}
       {jset; ~embedfield; inline; true ;create}
       {push; ~embedfields; {get; ~embedfield}}
 
       {set; ~embedfield; {j}}
       {jset; ~embedfield; name; Body ; create}
       {jset; ~embedfield; value; ```{foreach;~part;{get;~body};
-        {func.partidtoacro;{jget;~part;id}}: {realpad;{numformat;{math;/;{jget;~part;hp};1000000};2}M;8;{space};left}{newline}
-      }```;create}
+        {func.partidtoacro;{jget;~part;id}}: {realpad;{numformat;{math;/;{jget;~part;hp};1000000};2}M;10;{space};left}{newline}
+      }Ttl: {realpad;{numformat;{math;/;{get;~allbody};1000000};2}M;9;{space};left}```;create}
       {jset; ~embedfield; inline; true; create}
       {push; ~embedfields; {get; ~embedfield}}
 
       {set; ~embedfield; {j}}
       {jset; ~embedfield; name; Armor ; create}
       {jset; ~embedfield; value; ```{foreach;~part;{get;~armor};
-        {func.partidtoacro;{jget;~part;id}}: {realpad;{numformat;{math;/;{jget;~part;hp};1000000};2}M;8;{space};left}{newline}
-      }```;create}
+        {func.partidtoacro;{jget;~part;id}}: {realpad;{numformat;{math;/;{jget;~part;hp};1000000};2}M;10;{space};left}{newline}
+      }Ttl: {realpad;{numformat;{math;/;{get;~allarmor};1000000};2}M;9;{space};left}```;create}
       {jset; ~embedfield; inline; true; create}
       {push; ~embedfields; {get; ~embedfield}}
     }

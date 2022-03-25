@@ -1,0 +1,23 @@
+{if;{argslength};==;0;
+```
+Command to see who reacted using what in certain post
+
+Notes:
+- get the message link by right clicking the post (make sure blarg is there in the channel and can read message).
+
+Usage:
+{prefix}{commandname} <message_link>
+
+Example:
+{prefix}{commandname} https://discord.com/channels/387080866196750366/877679528904888350/877931038964338711
+```{return}
+}
+
+{set;~args;{split;{args; 0};/}}
+{set;~messageid;{pop;~args}}
+{set;~channelid;{pop;~args}}
+{set;~serverid;{pop;~args}}
+
+{foreach;~reaction;{listreact;{get;~channelid};{get;~messageid}};
+  <:{get;~reaction}>{newline}{foreach;~item;{listreact;{get;~channelid};{get;~messageid};{get;~reaction}};{usernick;{get;~item}}{newline}}{newline}
+}

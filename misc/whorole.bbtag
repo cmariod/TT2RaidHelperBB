@@ -1,0 +1,13 @@
+{if;{argslength};==;0;
+```
+Command to see who reacted using what in certain post
+
+Usage:
+{prefix}{commandname} <rolename>
+
+Example:
+{prefix}{commandname} somerole
+```{return}
+}
+
+{foreach;~item;{rolemembers;{args;0};true};{usernick;{get;~item}}{newline}}{newline}Total: {rolesize;{roleid;{args;0}}}

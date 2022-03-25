@@ -1,6 +1,7 @@
 {func;jkeyexists;{set;~path;{split;{params;1};.}}{set;~key;{pop;~path}}{set;~path;{join;~path;.}}{bool;{indexof;{jkeys;{params;0};{get;~path}};{get;~key}};!=;-1}}
 {func;arraysum;{set;~temp;0}{foreach;~item;{params;0};{void;{increment;~temp;{get;~item}}}}{get;~temp}}
 
+{set;~silentchannelid;[866671669119811614,699162974983815228]}
 {set;~channelid;857308612437999656}
 {set;~keyword;test}
 
@@ -9,13 +10,16 @@
 {increment;~count;{length;{regexmatch;{messagetext};/test/ig}}}
 {jset;_leaderboard{get;~keyword};{sender}.player;{sender};create}
 {jset;_leaderboard{get;~keyword};{sender}.count;{get;~count};create}
+{set;~index;0}
 
-{set;~leaderboardtext;```{capitalize;{get;~keyword}} Leaderboard{newline}╔{repeat;═;27}╦{repeat;═;5}╗{newline}{foreach;~item;{jsort;{jvalues;_leaderboard{get;~keyword}};count;descending};║{substring;{realpad;{regexreplace;{username;{jget;~item;player}};/\W+/gi;};28};0;27}║{realpad;{jget;~item;count};5;{space};left}║{newline}}╚{repeat;═;27}╩{repeat;═;5}╝```}
+{set;~leaderboardtext;```{capitalize;{get;~keyword}} Leaderboard{newline}╔{repeat;═;28}╦{repeat;═;5}╗{newline}{foreach;~item;{jsort;{jvalues;_leaderboard{get;~keyword}};count;descending};║{realpad;{substring;{regexreplace;{usernick;{jget;~item;player}};/\W+/gi;};0;26};28}║{realpad;{jget;~item;count};5;{space};left}║{newline}}╚{repeat;═;28}╩{repeat;═;5}╝```}
 
 {if;{length;{get;_leaderboard{get;~keyword}msgid}};>;0;
   {edit;{get;~channelid};{get;_leaderboard{get;~keyword}msgid};{get;~leaderboardtext}}
 ;
   {set;_leaderboard{get;~keyword}msgid;{send;{get;~channelid};{get;~leaderboardtext}}}
 }
+
+{if;{indexof;{get;~silentchannelid};{channelid}};!=;-1;{output;}{return}}
 
 {output;{capitalize;{get;~keyword}} counter: {func.arraysum;{map;~item;{jvalues;_leaderboard{get;~keyword}};{jget;~item;count}}}}

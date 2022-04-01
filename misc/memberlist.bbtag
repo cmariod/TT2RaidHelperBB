@@ -1,6 +1,6 @@
 {if;{argslength};==;0;
 ```
-Command to see who reacted using what in certain post
+Command to see who are people with certain role
 
 Usage:
 {prefix}{commandname} <rolename>

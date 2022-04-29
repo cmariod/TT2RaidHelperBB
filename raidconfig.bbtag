@@ -12,10 +12,10 @@ Usage:
 ```{return}
 }
 
-{if;{length;{get;_raidconfig{category}}};0;{set;_raidconfig{category};{j;{"fulliv":false}}}}
+{if;{length;{get;_{category}raidconfig}};0;{set;_{category}raidconfig;{j;{"fulliv":false}}}}
 
 {if;{argslength};==;2;
   {set;~setval;{switch;{args;1};["yes","true"];1;["no","false"];0;{parseint;{args;1}}}}
-  {jset;_raidconfig{category}; {args;0}; {get; ~setval}; create}
+  {jset;_{category}raidconfig; {args;0}; {get; ~setval}; create}
   {output;Raid Config {args;0} set to {get;~setval}}
 }

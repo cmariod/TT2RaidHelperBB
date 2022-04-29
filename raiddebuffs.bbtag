@@ -13,7 +13,7 @@ Show all possible debuff for titan (mohaca)
 }{return}}
 
 {if;{argslength};==;1;
-  {set; ~titanname; {shift;{filter;~element;{jvalues; _raiddata; Enemies};{bool;{get;~element};startswith;{capitalize;{args; 0}}}}}}
+  {set; ~titanname; {shift;{filter;~element;{jvalues; _{category}raiddata; Enemies};{bool;{get;~element};startswith;{capitalize;{args; 0}}}}}}
 }
 
 {set;~debuff;{j;{}}}
@@ -26,7 +26,7 @@ Show all possible debuff for titan (mohaca)
 {jset; ~embed; color; 15548997 ;create}
 {set; ~embedfields; []}
 
-{foreach;~raidtierzone;{jvalues;_seed};
+{foreach;~raidtierzone;{jvalues;_{category}seed};
   {if;{jget; ~raidtierzone; tier}-{jget; ~raidtierzone; level};==;{get;~startingraidtierzone};{set;~isstarted;true}}
   {if;{get;~isstarted};
     {foreach;~titan;{jget;~raidtierzone;titans};

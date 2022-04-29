@@ -30,9 +30,9 @@ Example:
 }
 
 {if; {isarray;{get;~seed}};
-  {set; _seed; {j;{}}}
+  {set; _{category}seed; {j;{}}}
   {foreach;~elem;~seed;
-    {jset; _seed; {jget;~elem;tier}-{jget;~elem;level}; {get; ~elem}; create}
+    {jset; _{category}seed; {jget;~elem;tier}-{jget;~elem;level}; {get; ~elem}; create}
   }
   
   {output; {length;{get;~seed}} seed data loaded}

@@ -29,7 +29,7 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
 }
 
 {//;default strategy}
-{if;{length;{get;_strat}};0;{set;_strat;{j;{"Default":{"Enemy1":"11111111","Enemy2":"11111111","Enemy3":"10111111","Enemy4":"01111111","Enemy5":"10111111","Enemy6":"01111111","Enemy7":"11111111","Enemy8":"11111111"}}}}}
+{if;{length;{get;_{category}strat}};0;{set;_{category}strat;{j;{"Default":{"Enemy1":"11111111","Enemy2":"11111111","Enemy3":"10111111","Enemy4":"01111111","Enemy5":"10111111","Enemy6":"01111111","Enemy7":"11111111","Enemy8":"11111111"}}}}}
 
 {if;{argslength};==;1;
   {if;{lower;{args; 0}};==;default;
@@ -39,8 +39,8 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
     {set; ~embedfields; []}
     {for;~index;0;<;8;
       {set; ~embedfield; {j;{}}}
-      {set; ~titanstrategy; {split;{regexreplace;{regexreplace;{jget;{jvalues;_strat;Default};{get; ~index}};/1/gi;O};/0/gi;X};}}
-      {jset; ~embedfield; name; {func.titanemoji;{jget;_raiddata;Enemies.{jget;{jkeys;_strat;Default};{get; ~index}}}} {jget;_raiddata;Enemies.{jget;{jkeys;_strat;Default};{get; ~index}}} ;create}
+      {set; ~titanstrategy; {split;{regexreplace;{regexreplace;{jget;{jvalues;_{category}strat;Default};{get; ~index}};/1/gi;O};/0/gi;X};}}
+      {jset; ~embedfield; name; {func.titanemoji;{jget;_{category}raiddata;Enemies.{jget;{jkeys;_{category}strat;Default};{get; ~index}}}} {jget;_{category}raiddata;Enemies.{jget;{jkeys;_{category}strat;Default};{get; ~index}}} ;create}
       {jset; ~embedfield; value; {jget;~titanstrategy;2} {jget;~titanstrategy;0} {jget;~titanstrategy;7}{newline}{jget;~titanstrategy;3} {jget;~titanstrategy;1} {jget;~titanstrategy;6}{newline}   {jget;~titanstrategy;4} {jget;~titanstrategy;5} ;create}
       {jset; ~embedfield; inline; true ;create}
       {push; ~embedfields; {get; ~embedfield}}
@@ -59,16 +59,16 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
   ;
     {set; ~embed; {j;{}}}
     {jset; ~embed; title; Titan Strategy List for {args;0};create}
-    {jset; ~embed; description; {func.buffformat;{jget;_seed;{args;0}.area_buffs.0}} ;create}
+    {jset; ~embed; description; {func.buffformat;{jget;_{category}seed;{args;0}.area_buffs.0}} ;create}
     {jset; ~embed; footer.text; (O)Hit (X)Avoid ;create}
     {set; ~embedfields; []}
-    {foreach;~titan;{jget;_seed;{args;0}.titans};
+    {foreach;~titan;{jget;_{category}seed;{args;0}.titans};
       {set; ~enemyname; {jget;~titan;enemy_name}}
       {set; ~debuffid; {func.buffid;{jget;~titan;area_debuffs.0}}}
       {set; ~basehp;{jget;~titan;total_hp}}
       {set; ~enemyid; {jget; ~titan; enemy_id}}
-      {set; ~titanstrategy; {split;{func.stratformat;{jget;_strat;{if;{func.jkeyexists;_strat;{get;~debuffid}.{get;~enemyid}};{get;~debuffid};Default}.{get;~enemyid}}};}}
-      {set; ~partstrategy; {concat;["0", "0"]; {split; {jget;_strat;{if;{func.jkeyexists;_strat;{get;~debuffid}.{get;~enemyid}};{get;~debuffid};Default}.{get;~enemyid}};}}}
+      {set; ~titanstrategy; {split;{func.stratformat;{jget;_{category}strat;{if;{func.jkeyexists;_{category}strat;{get;~debuffid}.{get;~enemyid}};{get;~debuffid};Default}.{get;~enemyid}}};}}
+      {set; ~partstrategy; {concat;["0", "0"]; {split; {jget;_{category}strat;{if;{func.jkeyexists;_{category}strat;{get;~debuffid}.{get;~enemyid}};{get;~debuffid};Default}.{get;~enemyid}};}}}
 
       {set;~body;[]}
       {set;~armor;[]}
@@ -80,10 +80,10 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
       {set;~allarmor;0}
       {foreach;~part;{jget;~titan;parts};
         {set;~partjson;{j}}
-        {jset;~partjson;id;{jget;_raiddata;Parts.{jget;~part;part_id}};create}
+        {jset;~partjson;id;{jget;_{category}raiddata;Parts.{jget;~part;part_id}};create}
         {jset;~partjson;hp;{jget;~part;total_hp};create}
 
-        {if;{jget;~part;cursed}; {push;~raidtitancurseparts;{jget;_raiddata;Parts.{jget;~part;part_id}}}}
+        {if;{jget;~part;cursed}; {push;~raidtitancurseparts;{jget;_{category}raiddata;Parts.{jget;~part;part_id}}}}
 
         {if;{jget;~part;part_id};startswith;Body;
           {push;~body;{get;~partjson}}
@@ -145,21 +145,21 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
 {set;~stratset;{args; {math;-;{argslength};1}}}
 
 {if;{argslength};==;2;
-  {set; ~titanname; {shift;{filter;~element;{jvalues; _raiddata; Enemies};{bool;{get;~element};startswith;{capitalize;{args; 0}}}}}}
-  {set; ~matchidx; {indexof; {jvalues; _raiddata; Enemies}; {get; ~titanname}}}
-  {set; ~enemyid; {jget; {jkeys; _raiddata; Enemies}; {get; ~matchidx}}}
+  {set; ~titanname; {shift;{filter;~element;{jvalues; _{category}raiddata; Enemies};{bool;{get;~element};startswith;{capitalize;{args; 0}}}}}}
+  {set; ~matchidx; {indexof; {jvalues; _{category}raiddata; Enemies}; {get; ~titanname}}}
+  {set; ~enemyid; {jget; {jkeys; _{category}raiddata; Enemies}; {get; ~matchidx}}}
   {set; ~debuff;Default}
 ;
-  {set; ~titan; {shift;{filter;~element;{jget; _seed; {args;1}.titans};{bool;{capitalize;{jget;~element;enemy_name}};startswith;{capitalize;{args; 0}}}}}}
+  {set; ~titan; {shift;{filter;~element;{jget; _{category}seed; {args;1}.titans};{bool;{capitalize;{jget;~element;enemy_name}};startswith;{capitalize;{args; 0}}}}}}
   {set; ~enemyid; {jget; ~titan; enemy_id}}
   {set; ~debuff;{func.buffid;{jget;~titan;area_debuffs.0}}}
   {set; ~titanname; {jget; ~titan; enemy_name}}
 }
 
-{if; {lower;{get;~stratset}}; ==; default; {set;~stratset; {jget; _strat; Default.{get; ~enemyid}}}}
+{if; {lower;{get;~stratset}}; ==; default; {set;~stratset; {jget; _{category}strat; Default.{get; ~enemyid}}}}
 
 {if; {length; {get;~stratset}}; !=; 8; {output; Missing part in strategy}{return}}
 
-{jset; _strat; {get;~debuff}.{get; ~enemyid}; {get;~stratset}; create}
+{jset; _{category}strat; {get;~debuff}.{get; ~enemyid}; {get;~stratset}; create}
 
 {output; {get; ~titanname} {if;{argslength};==;2;Default;{func.debuffformat;{jget;~titan;area_debuffs.0}}} strategy set to {capitalize;{get;~stratset};lower}}

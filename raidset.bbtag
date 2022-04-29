@@ -12,7 +12,7 @@ Example:
 ```{return}
 }
 
-{set; ~iscacheexpired; {bool;!=; {time;YYYYWW}; {get; _raidpreviewlastrun}}} {//; if cached data is on different week}
+{set; ~iscacheexpired; {bool;!=; {time;YYYYWW}; {get; _{category}raidpreviewlastrun}}} {//; if cached data is on different week}
 {set; ~arg0; {jget; {argsarray}; 0}}
 
 {//; check if data exists in cache and cache is recent}
@@ -20,15 +20,15 @@ Example:
   {get; ~iscacheexpired};
   {bool;
     ==;
-    {length;{filter;~element;{jkeys;{get;_cache}};{bool;{get;~element};startswith;{get;~arg0}}}};
+    {length;{filter;~element;{jkeys;{get;_{category}cache}};{bool;{get;~element};startswith;{get;~arg0}}}};
     0
   }
 }; 
   {output;Raid not found, please use {prefix}preview first}
 ;
-  {set; _raidtierzone; {get; ~arg0}}
-  {set; _activeraidavg; {get; _raidunbuffedavg}}
-  {set; _activeraidmorale; {get; _raidmorale}}
-  {set; _activeraidpower; {get; _membercount}}
+  {set; _{category}raidtierzone; {get; ~arg0}}
+  {set; _{category}activeraidavg; {get; _{category}raidunbuffedavg}}
+  {set; _{category}activeraidmorale; {get; _{category}raidmorale}}
+  {set; _{category}activeraidpower; {get; _{category}membercount}}
   {output;Done!}
 }

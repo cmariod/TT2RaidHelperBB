@@ -11,13 +11,13 @@ Parameters:
 ```
 }{return}}
 
-{if; {length; {get; _raidtierzone}}; ==; 0; {output;Raid not set, please {prefix}raidset first}}
+{if; {length; {get; _{category}raidtierzone}}; ==; 0; {output;Raid not set, please {prefix}raidset first}}
 
-{set; ~summarydata; {jclean;{jget; _cache; {get; _raidtierzone}}}}
-{set; ~computeddata; {jclean;{jget; _cache; {get; _raidtierzone}.computed}}}
+{set; ~summarydata; {jclean;{jget; _{category}cache; {get; _{category}raidtierzone}}}}
+{set; ~computeddata; {jclean;{jget; _{category}cache; {get; _{category}raidtierzone}.computed}}}
 
 {//; calculate cycle prediction here}
-{set; ~raidtier; {shift; {split; {get; _raidtierzone}; -}}}
+{set; ~raidtier; {shift; {split; {get; _{category}raidtierzone}; -}}}
 {if; {get; ~raidtier}; ==; 4;
   {set; ~hitspercycle; 5}
 ; 
@@ -31,10 +31,10 @@ Parameters:
 }}
 {set; ~bavg; {math;*;{parsefloat;
   {get; ~bavgmil}
-};1000000}} {jset; _cache; summary.bavg; {get; ~bavg}; create}
+};1000000}} {jset; _{category}cache; summary.bavg; {get; ~bavg}; create}
 {set; ~titansequence; {split;{jget; ~summarydata; flags};}}
 {set; ~totaltitans; {length;{get;~titansequence}}}
-{set; ~totalhitpercycle; {math;*;{get; _activeraidpower};{get;~hitspercycle}}}
+{set; ~totalhitpercycle; {math;*;{get; _{category}activeraidpower};{get;~hitspercycle}}}
 
 {set; ~overflowdmg; 0}
 {set; ~hitsused; 0}
@@ -45,7 +45,7 @@ Parameters:
 {set; ~cycledetails; [{j;{}}]}
 {set; ~cycleremaininghits; {get; ~totalhitpercycle}}
 {set; ~hitsusedlabel; 0}
-{set; ~isfullivdefault; {func.parsebool;{jget;_raidconfig{category};fulliv}}}
+{set; ~isfullivdefault; {func.parsebool;{jget;_{category}raidconfig;fulliv}}}
 
 {for;~index;0;<;{get; ~totaltitans};
   {set; ~enemyid; {jget;~titansequence;{get;~index}}}
@@ -72,7 +72,7 @@ Parameters:
     {get;~titanhpnonvma};
     {get;~basehphits}
   }}
-  {jset; _cache; summary.titan{get;~enemyid}.hits.nonvma; {get;~titanhitsnonvma}; create}
+  {jset; _{category}cache; summary.titan{get;~enemyid}.hits.nonvma; {get;~titanhitsnonvma}; create}
   
   {set; ~titanhpnonvmb; {math;-;
     {parsefloat;{jget; ~computeddata; titan{get;~enemyid}.hpprcntb}};
@@ -82,7 +82,7 @@ Parameters:
     {get;~titanhpnonvmb};
     {get;~basehphits}
   }}
-  {jset; _cache; summary.titan{get;~enemyid}.hits.nonvmb; {get;~titanhitsnonvmb}; create}
+  {jset; _{category}cache; summary.titan{get;~enemyid}.hits.nonvmb; {get;~titanhitsnonvmb}; create}
   
   {set; ~titanvmhpa; {math;*;
     {parsefloat;{jget; ~computeddata; titan{get;~enemyid}.vm.hpprcnta}};
@@ -104,9 +104,9 @@ Parameters:
     {get; ~titanhitsvma};
     {get; ~titanhitsvmb}
   }}
-  {jset; _cache; summary.titan{get;~enemyid}.hits.vma; {get;~titanhitsvma}; create}
-  {jset; _cache; summary.titan{get;~enemyid}.hits.vmb; {get;~titanhitsvmb}; create}
-  {jset; _cache; summary.titan{get;~enemyid}.hits.vm; {get;~titanhitsvm}; create}
+  {jset; _{category}cache; summary.titan{get;~enemyid}.hits.vma; {get;~titanhitsvma}; create}
+  {jset; _{category}cache; summary.titan{get;~enemyid}.hits.vmb; {get;~titanhitsvmb}; create}
+  {jset; _{category}cache; summary.titan{get;~enemyid}.hits.vm; {get;~titanhitsvm}; create}
 
   {set; ~titanbodyhitsleft; {get;~basehphits}}
   
@@ -190,12 +190,12 @@ Parameters:
   {jset; ~cycledetails; {get;~currentcycle}.titans.{get;~index}.steps; {get; ~cyclesteps}; create}
 }
 
-{jset; _cache; summary.cycledetails; {get;~cycledetails}; create}
+{jset; _{category}cache; summary.cycledetails; {get;~cycledetails}; create}
 
-{output;{get; _raidtierzone} Strat @ {numformat;{get; ~bavgmil};2}M avg DMG:
+{output;{get; _{category}raidtierzone} Strat @ {numformat;{get; ~bavgmil};2}M avg DMG:
 
 RaidBuff : {jget; ~computeddata; buff.text}
-MoraleBuff : +{get; _activeraidmorale}%
+MoraleBuff : +{get; _{category}activeraidmorale}%
 
 {realpad;{jget; ~computeddata; titan1.name};8}: {jget; ~computeddata; debuff1.text}
 {realpad;{jget; ~computeddata; titan2.name};8}: {jget; ~computeddata; debuff2.text}

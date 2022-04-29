@@ -1,0 +1,66 @@
+{set;~channelid;953123531078639686}{if;{channelid};!=;{get;~channelid};{return}}
+{//; anything posted in this channel id will be treated as command, and the whole message will be treated as parameters separated by space}
+
+{func;jkeyexists;{set;~path;{split;{params;1};.}}{set;~key;{pop;~path}}{set;~path;{join;~path;.}}{bool;{indexof;{jkeys;{params;0};{get;~path}};{get;~key}};!=;-1}}
+{func;arraysum;{set;~temp;0}{foreach;~item;{params;0};{void;{increment;~temp;{get;~item}}}}{get;~temp}}
+
+{func;refreshstats;}
+
+{set;~params;{split;{trim;{messagetext}};{space}}}
+
+{if;{match;{messagetext};/(?:cancel|done|c|d)/i};
+  {set;~output;rubish}
+  {//; remove from active hit, cleanup previous message}
+  {//; jset;_activehit{channelid};{sender};;create}
+
+  {//;if;{match;{messagetext};/(?:done|d)/i};
+    {//; commit the hit, add to history}
+
+    {set;~count;{if;{func.jkeyexists;_submittedhit{channelid};clan.count};{jget;_submittedhit{channelid};clan.count};0}}
+    {increment;~count}
+    {jset;_submittedhit{channelid};clan.count;{get;~count};create}
+
+    {set;~count;{if;{func.jkeyexists;_submittedhit{channelid};{sender}.count};{jget;_submittedhit{channelid};{sender}.count};0}}
+    {increment;~count}
+    {jset;_submittedhit{channelid};{sender}.player;{sender};create}
+    {jset;_submittedhit{channelid};{sender}.count;{get;~count};create}
+
+    {foreach;~item;{get;~params};
+      {switch;{get;~item};
+        ["pr","prism"]; {increment;_prismused{channelid}};
+        ["iv","void"]; {increment;_ivused{channelid}};
+        ["vm"]; {increment;_vmused{channelid}};
+        ["tt"]; {increment;_ttused{channelid}};
+        ["tot"]; {increment;_totused{channelid}};
+      }
+    }
+
+    {push;_hitlog{channelid};{sender}@{time}{space}{messagetext}}
+
+  }
+
+;
+
+  {if;{length;{get;_activehit{channelid}}};==;0;{set;_activehit{channelid};{j}}}
+  {if;{func.jkeyexists;_activehit{channelid};{sender}};{//; there's active hit called}{return}}
+
+  {set;~target;{match;{jget;~params;0};/[1-9]+/i}}
+  {set;~output;{get;~target}}
+
+  {//; pump into array of active hit}
+  {jset;_activehit{channelid};{sender}.msgid;{messageid};create}
+  {jset;_activehit{channelid};{sender}.msgtime;{timestamp};create}
+
+  {foreach;~item;{split;{get;~target};};
+    {set;~count;{if;{func.jkeyexists;_activehit{channelid};partstack.{get;~item}};{jget;_submittedhit{channelid};partstack.{get;~item}};0}}
+    {jset;_activehit{channelid};partstack.{get;~item};{increment;~count};create}
+  }
+
+}
+
+{set;~hitstattext;Active Hits{newline}{get;_activehit{channelid}}{newline}Part Stacks{newline}Hits in{newline}{get;_submittedhit{channelid}}}
+{if;{length;{get;_hitstat{channelid}msgid}};>;0;{edit;{get;~channelid};{get;_hitstat{channelid}msgid};{get;~hitstattext}};{set;_hitstat{channelid}msgid;{send;{get;~channelid};{get;~hitstattext}}}}
+
+{output;{get;~output}}
+
+{delete}

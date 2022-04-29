@@ -1,0 +1,24 @@
+{set;~channelid;953123531078639686}{if;{channelid};!=;{get;~channelid};{return}}
+{//; anything posted in this channel id will be treated as command, and the whole message will be treated as parameters separated by space}
+
+{func;jkeyexists;{set;~path;{split;{params;1};.}}{set;~key;{pop;~path}}{set;~path;{join;~path;.}}{bool;{indexof;{jkeys;{params;0};{get;~path}};{get;~key}};!=;-1}}
+{func;arraysum;{set;~temp;0}{foreach;~item;{params;0};{void;{increment;~temp;{get;~item}}}}{get;~temp}}
+
+{func;refreshstats;}
+
+{set;~params;{split;{trim;{messagetext}};{space}}}
+
+{if;{length;{get;_activehit{channelid}}};==;0;{set;_activehit{channelid};{j}}}
+
+{set;~target;{match;{jget;~params;0};/[1-9]+/i}}
+
+{jset;_activehit{channelid};{sender}.msgid;{messageid};create}
+{jset;_activehit{channelid};{sender}.msgtime;{timestamp};create}
+
+{foreach;~item;{split;{get;~target};};
+  {set;~count;{if;{func.jkeyexists;_activehit{channelid};partstack.{get;~item}};{jget;_submittedhit{channelid};partstack.{get;~item}};0}}
+  {jset;_activehit{channelid};partstack.{get;~item};{increment;~count};create}
+}
+
+{set;~hitstattext;Active Hits{newline}{get;_activehit{channelid}}{newline}Part Stacks{newline}Hits in{newline}{get;_submittedhit{channelid}}}
+{if;{length;{get;_hitstat{channelid}msgid}};>;0;{edit;{get;~channelid};{get;_hitstat{channelid}msgid};{get;~hitstattext}};{set;_hitstat{channelid}msgid;{send;{get;~channelid};{get;~hitstattext}}}}

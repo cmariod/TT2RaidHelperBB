@@ -76,3 +76,17 @@ Buff and Debuff that contains Burst, Affliction, Chance and Duration are tricky 
 ## Manual Patch to 5.1.4
 
 New command (patch514.bbtag) added as a manual patch of raiddata from 5.1.3 to 5.1.4, to preserve any other custom raiddata that is modified manually. Alternatively can update loadraiddata command and rerun it to load the new raiddata.
+
+## Migrating to Category Prefixed Commandname
+
+If you updating bot into category prefixed command, you'll need to move your data into category prefixed vars by running cc below.
+
+`.cc test {set;_{category}raiddata;{get;_raiddata}}`
+`.cc test {set;_{category}strat;{get;_strat}}`
+`.cc test {set;_{category}raidconfig;{get;_raidconfig{category}}}`
+
+and to cleanup past data
+
+`.cc test {set;_raiddata;}`
+`.cc test {set;_strat;}`
+`.cc test {set;_raidconfig{category};}`

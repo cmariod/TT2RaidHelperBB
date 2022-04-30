@@ -17,15 +17,18 @@ Example:
 ```{return}
 }
 
-{set; ~arg0; {pop;{split;{args; 0};/}}}
+{set;~args;{split;{args; 0};/}}
+{set;~messageid;{pop;~args}}
+{set;~channelid;{pop;~args}}
+{set;~serverid;{pop;~args}}
 
-{if; {isarray;{messageattachments;{get; ~arg0}}}; ; {set; ~error; Message doesn't have attachment}}
+{if; {isarray;{messageattachments;{get;~channelid};{get;~messageid}}}; ; {set; ~error; Message doesn't have attachment}}
 
 {if; {length; {get; ~error}}; >; 0; {output;Error: {get; ~error}}{return}}
 
 {set; ~seed; 
   {jclean; {jget; 
-    {request; {jget; {messageattachments;{get; ~arg0}}; 0} }
+    {request; {jget; {messageattachments;{get;~channelid};{get;~messageid}}; 0} }
   ; body}}
 }
 

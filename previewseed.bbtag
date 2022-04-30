@@ -419,7 +419,7 @@ Related commands:
 {jset; ~embed; title; Preview: {get; ~raidtierzone} ({get; _{category}membercount}:bust_in_silhouette: ) ;create}
 {jset; ~embed; description; Buff: {func.buffformat;{get; ~raidbuff}}{newline}Sequence: {join;{map;~item;{get; ~spawnsequence};{increment;~idx}{func.titanemoji;{get;~item}}};{space}} ;create}
 {jset; ~embed; color; {switch;{get;~raidtier};1;16777215;2;255;3;10845184;4;6697881} ;create}
-{jset; ~embed; footer.text; (N)Normal (C)Cursed | (O)Hit (X)Avoid ;create}
+{jset; ~embed; footer.text; (N)Normal (C)Cursed | (O)Hit (X)Avoid{newline}Seed: {get;_{category}loadedseed} ;create}
 {set; ~embedfields; []}
 
 {set; ~embedfield; {j;{}}}

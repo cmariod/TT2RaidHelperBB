@@ -15,6 +15,7 @@ Example: Show raid seed starting from 3-55
 {set; ~embed; {j;{}}}
 {jset; ~embed; title; Raid List Preview ;create}
 {jset; ~embed; color; 16316671 ;create}
+{jset; ~embed; footer.text; Seed: {get;_{category}loadedseed} ;create}
 
 {set; ~embedfields; []}
 

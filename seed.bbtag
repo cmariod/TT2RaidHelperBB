@@ -26,9 +26,13 @@ Example:
 
 {if; {length; {get; ~error}}; >; 0; {output;Error: {get; ~error}}{return}}
 
+{set;~attachments;{jget; {messageattachments;{get;~channelid};{get;~messageid}}; 0}}
+{set;~attachmentparts;{regexsplit;{get;~attachments};/[\W_]+/}}
+{set;_{category}loadedseed;{jget;~attachmentparts;9}}
+
 {set; ~seed; 
   {jclean; {jget; 
-    {request; {jget; {messageattachments;{get;~channelid};{get;~messageid}}; 0} }
+    {request; {get;~attachments} }
   ; body}}
 }
 
@@ -38,7 +42,7 @@ Example:
     {jset; _{category}seed; {jget;~elem;tier}-{jget;~elem;level}; {get; ~elem}; create}
   }
   
-  {output; {length;{get;~seed}} seed data loaded}
+  {output; {jget;~attachmentparts;7} {jget;~attachmentparts;8} {jget;~attachmentparts;9} loaded }
 ;
   {output; Hmm, something is wrong}
 }

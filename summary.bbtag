@@ -108,6 +108,7 @@ Parameters:
   {jset; _{category}cache; summary.titan{get;~enemyid}.hits.vmb; {get;~titanhitsvmb}; create}
   {jset; _{category}cache; summary.titan{get;~enemyid}.hits.vm; {get;~titanhitsvm}; create}
 
+  {set; ~titanarmorhitsleft; {get;~titanhitsnonvma}}
   {set; ~titanbodyhitsleft; {get;~basehphits}}
   
   {set; ~cyclesteps; []}
@@ -122,6 +123,7 @@ Parameters:
         {set; ~hitsused; {get;~titanhitsnonvma}}
         {set; ~hitsusedlabel; {get;~hitsused}}
         {set; ~emoji; <:IV:859792058205077524>}
+        {decrement; ~titanarmorhitsleft; {get; ~hitsused}; false}
       ;
       
       VM;
@@ -153,6 +155,14 @@ Parameters:
       {increment; ~cycleremaininghits; {get; ~totalhitpercycle}; false}
 
       {switch;{get;~phase};
+        IV;
+          {increment; ~titanarmorhitsleft; {get; ~totalhitsincycle}; false}
+          {push; ~cyclesteps; ArmorLeft: {numformat;
+            {math;/;{math;*;{get; ~titanarmorhitsleft};{parsefloat;{get;~bavg}}};1000000}
+          ;2}M}
+          {decrement; ~titanarmorhitsleft; {get; ~totalhitsincycle}; false}
+        ;
+
         VM;
           {increment; ~titanbodyhitsleft; {get; ~totalhitsincycle}; false}
           {push; ~cyclesteps; HPLeft: {numformat;

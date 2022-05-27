@@ -57,10 +57,13 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
     {output; {embed;{jclean;{get; ~embed}}}}
     {return}
   ;
+    {set; ~spawnsequence; {jget;_{category}seed;{args;0}.spawn_sequence}}
+    {set;~idx;0}
+    
     {set; ~embed; {j;{}}}
     {jset; ~embed; title; Titan Strategy List for {args;0};create}
-    {jset; ~embed; description; {func.buffformat;{jget;_{category}seed;{args;0}.area_buffs.0}} ;create}
-    {jset; ~embed; footer.text; (O)Hit (X)Avoid ;create}
+    {jset; ~embed; description; {func.buffformat;{jget;_{category}seed;{args;0}.area_buffs.0}}{newline}Sequence: {join;{map;~item;{get; ~spawnsequence};{increment;~idx}{func.titanemoji;{get;~item}}};{space}} ;create}
+    {jset; ~embed; footer.text; Seed: {get;_{category}loadedseed} | (O)Hit (X)Avoid ;create}
     {set; ~embedfields; []}
     {foreach;~titan;{jget;_{category}seed;{args;0}.titans};
       {set; ~enemyname; {jget;~titan;enemy_name}}

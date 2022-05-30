@@ -77,6 +77,10 @@ Buff and Debuff that contains Burst, Affliction, Chance and Duration are tricky 
 
 New command (patch514.bbtag) added as a manual patch of raiddata from 5.1.3 to 5.1.4, to preserve any other custom raiddata that is modified manually. Alternatively can update loadraiddata command and rerun it to load the new raiddata.
 
+## Manual Patch to Support Armor Priority Calculation
+
+`.cc test {jset;_{category}strat;Sequence.Default;{j;{"Enemy1":"78341256","Enemy2":"87341256","Enemy3":"78341256","Enemy4":"78341256","Enemy5":"78341256","Enemy6":"78341256","Enemy7":"87125634","Enemy8":"87125634"}};create}`
+
 ## Migrating to Category Prefixed Commandname
 
 If you updating bot into category prefixed command, you'll need to move your data into category prefixed vars by running cc below.

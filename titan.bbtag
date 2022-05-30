@@ -29,7 +29,7 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
 }
 
 {//;default strategy}
-{if;{length;{get;_{category}strat}};0;{set;_{category}strat;{j;{"Default":{"Enemy1":"11111111","Enemy2":"11111111","Enemy3":"10111111","Enemy4":"01111111","Enemy5":"10111111","Enemy6":"01111111","Enemy7":"11111111","Enemy8":"11111111"}}}}}
+{if;{length;{get;_{category}strat}};0;{set;_{category}strat;{j;{"Default":{"Enemy1":"11111111","Enemy2":"11111111","Enemy3":"10111111","Enemy4":"01111111","Enemy5":"10111111","Enemy6":"01111111","Enemy7":"11111111","Enemy8":"11111111"},"DefaultSequence":{"Enemy1":"78341256","Enemy2":"87341256","Enemy3":"78341256","Enemy4":"78341256","Enemy5":"78341256","Enemy6":"78341256","Enemy7":"87125634","Enemy8":"87125634"}}}}}
 
 {if;{argslength};==;1;
   {if;{lower;{args; 0}};==;default;

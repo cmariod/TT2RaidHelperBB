@@ -175,6 +175,8 @@ Related commands:
   {set; ~debuffid; {func.buffid;{get;~raidtitandebuff{get;~index}}}}
   {set; ~raidtitan{get;~index}strat; {jget;_{category}strat;{if;{func.jkeyexists;_{category}strat;{get;~debuffid}.{get;~enemyid}};{get;~debuffid};Default}.{get;~enemyid}} }
   {jset; _{category}cache; {get; ~raidtierzone}.computed.titan{get;~index}.strat; {get;~raidtitan{get;~index}strat}; create}
+  {set; ~raidtitan{get;~index}armorsequence; {jget;_{category}strat;Sequence.{if;{func.jkeyexists;_{category}strat;Sequence.{get;~debuffid}.{get;~enemyid}};{get;~debuffid};Default}.{get;~enemyid}} }
+  {jset; _{category}cache; {get; ~raidtierzone}.computed.titan{get;~index}.armorsequence; {get;~raidtitan{get;~index}armorsequence}; create}
   
   {//; get debuff text}
   {set; ~raiddebuff{get;~index}index; {shift;{filter;~element;{jkeys;_{category}raiddata;Debuffs};{bool;{get;~element};contains;|{jget;~raidtitandebuff{get;~index};bonus_type}|}}} }

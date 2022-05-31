@@ -209,6 +209,7 @@ Parameters:
 {set; ~embed; {j;{}}}
 {jset; ~embed; title; {get; _{category}raidtierzone} Strat @ {numformat;{get; ~bavgmil};2}M avg DMG;create}
 {jset; ~embed; description; RaidBuff : {jget; ~computeddata; buff.text}{newline}MoraleBuff : +{get; _{category}activeraidmorale}% ;create}
+{jset; ~embed; footer.text; Disclaimer:{newline}Strategy are subject to change depends on actual progress.{newline}Stay tuned for any announcement. ;create}
 {set; ~embedfields; []}
 
 {for;~index;1;<;4;
@@ -238,9 +239,20 @@ Parameters:
 }
 {set;~armorpriority;{concat;{get;~cursedsequence};{get;~armorsequence}}}
 
+{set; ~humanestrat; {split;{regexreplace;{regexreplace;{jget;~computeddata;titan{get;~index}.strat};/1/gi;O};/0/gi;X};}}
+{foreach;~elem;{get;~cursedpart};
+  {set;~partindex;{math;-;{get;~elem};2}}
+  {if;{jget;~humanestrat;{get;~partindex}};==;O;
+    {jset;~humanestrat;{get;~partindex};C}
+  }
+}
+
 {set; ~embedfield; {j}}
 {jset; ~embedfield; name; {jget; ~computeddata; titan{get;~index}.name} ;create}
-{jset; ~embedfield; value; {jget; ~computeddata; debuff{get;~index}.text}{newline}Curse: {join;{map;~item;{jget; ~summarydata; curse{get;~index}.parts};{func.partidtoacro;{get;~item}}};,}{newline}{func.curseformat;{jget; ~summarydata; curse{get;~index}}}{newline}Armor Priority:{newline}{join;{map;~item;{get;~armorpriority};{func.partidtoacro;{get;~item}}};>};create}
+{jset; ~embedfield; value; {jget; ~computeddata; debuff{get;~index}.text}{newline}```
+ {jget;~humanestrat;2} {jget;~humanestrat;0} {jget;~humanestrat;7}  Curse:
+ {jget;~humanestrat;3} {jget;~humanestrat;1} {jget;~humanestrat;6}  {func.curseacro;{jget; ~summarydata; curse{get;~index}.bonus_type}}
+  {jget;~humanestrat;4} {jget;~humanestrat;5}```Armor Priority:{newline}{join;{map;~item;{get;~armorpriority};{func.partidtoacro;{get;~item}}};>};create}
 {jset; ~embedfield; inline; true ;create}
 {push; ~embedfields; {get; ~embedfield}}
 

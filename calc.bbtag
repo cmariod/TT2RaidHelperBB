@@ -11,7 +11,7 @@ produces: 17
 {set;~formula;{join;{argsarray};}}
 {set;~operators_allowed; ["*", "/", "+", "-"]}
 {set;~operands;{regexsplit;{get;~formula};/[\*\/\+\-]/}}
-{set;~operators;{match;{get;~formula};/[\*\/\+\-]/g}}
+{set;~operators;{regexmatch;{get;~formula};/[\*\/\+\-]/g}}
 
 {foreach;~ops;~operators_allowed;
   {set;~idx;{indexof;{get;~operators};{get;~ops}}}

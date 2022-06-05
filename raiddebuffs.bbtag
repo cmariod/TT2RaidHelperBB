@@ -21,9 +21,10 @@ Show all possible debuff for titan (mohaca)
 {set;~isstarted;false}
 {set;~startingraidtierzone;3-1}
 
-{set; ~embed; {j;{}}}
+{set; ~embed; {j;{"color": 15548997}}}
+{//; set; ~embed; {j;{}}}
 {jset; ~embed; title; All Possible Debuff ;create}
-{jset; ~embed; color; 15548997 ;create}
+{//; jset; ~embed; color; 15548997 ;create}
 {set; ~embedfields; []}
 
 {foreach;~raidtierzone;{jvalues;_{category}seed};

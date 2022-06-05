@@ -17,16 +17,22 @@ Example:
 ```{return}
 }
 
-{set;~args;{split;{args; 0};/}}
-{set;~messageid;{pop;~args}}
-{set;~channelid;{pop;~args}}
-{set;~serverid;{pop;~args}}
+{if;{args;0};endswith;json;
+  {set;~attachments;{args;0}}
+;
+  {set;~args;{split;{args; 0};/}}
+  {set;~messageid;{pop;~args}}
+  {set;~channelid;{pop;~args}}
+  {set;~serverid;{pop;~args}}
 
-{if; {isarray;{messageattachments;{get;~channelid};{get;~messageid}}}; ; {set; ~error; Message doesn't have attachment}}
+  {if; {isarray;{messageattachments;{get;~channelid};{get;~messageid}}}; ; {set; ~error; Message doesn't have attachment}}
 
-{if; {length; {get; ~error}}; >; 0; {output;Error: {get; ~error}}{return}}
+  {if; {length; {get; ~error}}; >; 0; {output;Error: {get; ~error}}{return}}
 
-{set;~attachments;{jget; {messageattachments;{get;~channelid};{get;~messageid}}; 0}}
+  {set;~attachments;{jget; {messageattachments;{get;~channelid};{get;~messageid}}; 0}}
+}
+
+
 {set;~attachmentparts;{regexsplit;{get;~attachments};/[\W_]+/}}
 {set;_{category}loadedseed;{jget;~attachmentparts;9}}
 

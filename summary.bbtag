@@ -24,6 +24,10 @@ Parameters:
   {set; ~hitspercycle; 4}
 }
 
+{set; ~flagset; {if; {flagset;v}; 
+  {split;{flag; v};}
+}}
+
 {set; ~bavgmil; {if; {flagset;d}; 
   {flag; d}
 ;
@@ -50,6 +54,7 @@ Parameters:
 {for;~index;0;<;{get; ~totaltitans};
   {set; ~enemyid; {jget;~titansequence;{get;~index}}}
   {set; ~titanhp; {jget; ~computeddata; titan{get;~enemyid}.hp}}
+  {set; ~flagsetindex; {bool;{indexof;{get;~flagset};{math;+;{get; ~index};1}};!=;-1}}
 
   {set; ~basehp; {jget; ~computeddata; titan{get;~enemyid}.basehp}}
   {set; ~basehphits; {math;/;
@@ -61,7 +66,7 @@ Parameters:
   
   {set; ~titanhpnonvma; {parsefloat;{jget; ~computeddata; titan{get;~enemyid}.hpprcnta}} }
   {decrement; ~titanhpnonvma; 
-    {if; {flagset; {math;+;{get; ~index};1}};
+    {if; {get;~flagsetindex};
       {if;{get;~isfullivdefault};==;true;{parsefloat;{jget; ~computeddata; titan{get;~enemyid}.vm.hpprcnta}};0}
       ;
       {if;{get;~isfullivdefault};==;true;0;{parsefloat;{jget; ~computeddata; titan{get;~enemyid}.vm.hpprcnta}}}
@@ -88,7 +93,7 @@ Parameters:
     {parsefloat;{jget; ~computeddata; titan{get;~enemyid}.vm.hpprcnta}};
     {get;~basehphits}
   }}
-  {set; ~titanhitsvma; {if; {flagset; {math;+;{get; ~index};1}};
+  {set; ~titanhitsvma; {if; {get;~flagsetindex};
     {if;{get;~isfullivdefault};==;true;{get;~titanvmhpa};0}
     ;
     {if;{get;~isfullivdefault};==;true;0;{get;~titanvmhpa}}
@@ -209,7 +214,7 @@ Parameters:
 {set; ~embed; {j;{}}}
 {jset; ~embed; title; {get; _{category}raidtierzone} Strat @ {numformat;{get; ~bavgmil};2}M avg DMG;create}
 {jset; ~embed; description; RaidBuff : {jget; ~computeddata; buff.text}{newline}MoraleBuff : +{get; _{category}activeraidmorale}% ;create}
-{jset; ~embed; footer.text; Disclaimer:{newline}Strategy are subject to change depends on actual progress.{newline}Stay tuned for any announcement. ;create}
+{jset; ~embed; footer.text; Disclaimer:{newline}Strategy are subject to change depends on actual progress.{newline}Stay tuned for any announcement.;create}
 {set; ~embedfields; []}
 
 {for;~index;1;<;4;

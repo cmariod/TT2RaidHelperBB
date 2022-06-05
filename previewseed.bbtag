@@ -417,7 +417,7 @@ Related commands:
 {//; ---------------------------- all output below}
 
 {set;~idx;0}
-{set; ~embed; {j;{"color":{switch;{get;~raidtier};1;16777215;2;255;3;10845184;4;6697881}}}}
+{set; ~embed; {switch;{get;~raidtier};1;{j;{"color":16777215}};2;{j;{"color":255}};3;{j;{"color":10845184}};4;{j;{"color":6697881}}}}
 {//; set; ~embed; {j;{}}}
 {jset; ~embed; title; Preview: {get; ~raidtierzone} ({get; _{category}membercount}:bust_in_silhouette: ) ;create}
 {jset; ~embed; description; Buff: {func.buffformat;{get; ~raidbuff}}{newline}Sequence: {join;{map;~item;{get; ~spawnsequence};{increment;~idx}{func.titanemoji;{get;~item}}};{space}} ;create}

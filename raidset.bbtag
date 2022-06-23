@@ -30,5 +30,7 @@ Example:
   {set; _{category}activeraidavg; {get; _{category}raidunbuffedavg}}
   {set; _{category}activeraidmorale; {get; _{category}raidmorale}}
   {set; _{category}activeraidpower; {get; _{category}membercount}}
+  {set; _{category}activeraidtitanindex; 0}
+  {set; _{category}activeraid; {j}}
   {output;Done!}
 }

@@ -51,6 +51,37 @@ Parameters:
 {set; ~hitsusedlabel; 0}
 {set; ~isfullivdefault; {func.parsebool;{jget;_{category}raidconfig;fulliv}}}
 
+{for;~index;1;<;4;
+
+{set;~sequence;{split;{jget;~computeddata;titan{get;~index}.armorsequence};}}
+{set;~strat;{split;{jget;~computeddata;titan{get;~index}.strat};}}
+{set;~stratsequence;[]}
+{for;~i;0;<;8;
+  {push;~stratsequence;{math;*;{jget;~strat;{get;~i}};{jget;~sequence;{get;~i}}}}
+}
+
+{set;~cursedpart;{map;~part;{jget; ~summarydata; curse{get;~index}.parts};{substring;{get;~part};0;1}}}
+{set;~cursedsequence;[]}
+{set;~armorsequence;[]}
+{set;~debug;[]}
+{for;~i;1;<;9;
+  {set;~indexof;{indexof;{get;~stratsequence};{get;~i}}}
+  {if;{get;~indexof};>;-1;
+    {set;~partid;{math;+;{get;~indexof};2}}
+    {push;~debug;{get;~partid}}
+    {if;{indexof;{get;~cursedpart};{get;~partid}};>;-1;
+      {push;~cursedsequence;{get;~partid}}
+    ;
+      {push;~armorsequence;{get;~partid}}
+    }
+  }
+}
+{set;~armorpriority{get;~index};{concat;{get;~cursedsequence};{get;~armorsequence}}}
+
+}
+
+{set;~alltitanarmorpriority;[]}
+
 {for;~index;0;<;{get; ~totaltitans};
   {set; ~enemyid; {jget;~titansequence;{get;~index}}}
   {set; ~titanhp; {jget; ~computeddata; titan{get;~enemyid}.hp}}
@@ -112,6 +143,8 @@ Parameters:
   {jset; _{category}cache; summary.titan{get;~enemyid}.hits.vma; {get;~titanhitsvma}; create}
   {jset; _{category}cache; summary.titan{get;~enemyid}.hits.vmb; {get;~titanhitsvmb}; create}
   {jset; _{category}cache; summary.titan{get;~enemyid}.hits.vm; {get;~titanhitsvm}; create}
+
+  {push;~alltitanarmorpriority;{get;~armorpriority{get;~enemyid}}}
 
   {set; ~titanarmorhitsleft; {get;~titanhitsnonvma}}
   {set; ~titanbodyhitsleft; {get;~basehphits}}
@@ -209,6 +242,8 @@ Parameters:
   {jset; ~cycledetails; {get;~currentcycle}.titans.{get;~index}.steps; {get; ~cyclesteps}; create}
 }
 
+{jset; _{category}activeraid; titanarmorsequence; {get;~alltitanarmorpriority}; create}
+
 {jset; _{category}cache; summary.cycledetails; {get;~cycledetails}; create}
 
 {set; ~embed; {j;{}}}
@@ -218,31 +253,6 @@ Parameters:
 {set; ~embedfields; []}
 
 {for;~index;1;<;4;
-
-{set;~sequence;{split;{jget;~computeddata;titan{get;~index}.armorsequence};}}
-{set;~strat;{split;{jget;~computeddata;titan{get;~index}.strat};}}
-{set;~stratsequence;[]}
-{for;~i;0;<;8;
-  {push;~stratsequence;{math;*;{jget;~strat;{get;~i}};{jget;~sequence;{get;~i}}}}
-}
-
-{set;~cursedpart;{map;~part;{jget; ~summarydata; curse{get;~index}.parts};{substring;{get;~part};0;1}}}
-{set;~cursedsequence;[]}
-{set;~armorsequence;[]}
-{set;~debug;[]}
-{for;~i;1;<;9;
-  {set;~indexof;{indexof;{get;~stratsequence};{get;~i}}}
-  {if;{get;~indexof};>;-1;
-    {set;~partid;{math;+;{get;~indexof};2}}
-    {push;~debug;{get;~partid}}
-    {if;{indexof;{get;~cursedpart};{get;~partid}};>;-1;
-      {push;~cursedsequence;{get;~partid}}
-    ;
-      {push;~armorsequence;{get;~partid}}
-    }
-  }
-}
-{set;~armorpriority;{concat;{get;~cursedsequence};{get;~armorsequence}}}
 
 {set; ~humanestrat; {split;{regexreplace;{regexreplace;{jget;~computeddata;titan{get;~index}.strat};/1/gi;O};/0/gi;X};}}
 {foreach;~elem;{get;~cursedpart};
@@ -257,7 +267,7 @@ Parameters:
 {jset; ~embedfield; value; {jget; ~computeddata; debuff{get;~index}.text}{newline}```
  {jget;~humanestrat;2} {jget;~humanestrat;0} {jget;~humanestrat;7}  Curse:
  {jget;~humanestrat;3} {jget;~humanestrat;1} {jget;~humanestrat;6}  {func.curseacro;{jget; ~summarydata; curse{get;~index}.bonus_type}}
-  {jget;~humanestrat;4} {jget;~humanestrat;5}```Armor Priority:{newline}{join;{map;~item;{get;~armorpriority};{func.partidtoacro;{get;~item}}};>};create}
+  {jget;~humanestrat;4} {jget;~humanestrat;5}```Armor Priority:{newline}{join;{map;~item;{get;~armorpriority{get;~index}};{func.partidtoacro;{get;~item}}};>};create}
 {jset; ~embedfield; inline; true ;create}
 {push; ~embedfields; {get; ~embedfield}}
 

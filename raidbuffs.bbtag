@@ -26,7 +26,7 @@ Example: Show raid seed starting from 3-55
   {if;{get;~isstarted};
     {set;~tier;{jget; ~raidtierzone; tier}}
     {switch; {get;~tier};
-      ["3","4"];
+      ["3","4", "5", "9999"];
         {set; ~embedfield; {j;{}}}
         {jset; ~embedfield; name; {jget; ~raidtierzone; tier}-{jget; ~raidtierzone; level};create}
         {jset; ~embedfield; value; {func.buffformat;{jget;~raidtierzone;area_buffs.0}}{newline}{join;{map;~item;{jget; ~raidtierzone; spawn_sequence};{func.titanemoji;{get;~item}}};};create}
@@ -36,7 +36,7 @@ Example: Show raid seed starting from 3-55
         {set; ~embedfield; {j;{}}}
         {jset; ~embedfield; name; Titan & Curse ; create}
         {jset; ~embedfield; value; {foreach;~titan;{jget;~raidtierzone;titans};
-          {func.titanemoji;{jget;~titan;enemy_name}}{space}{if;{get;~tier};==;4;{func.curseacro;{jget;~titan;cursed_debuffs.0.bonus_type}}{space}{set; ~raidtitancurseparts; []}{foreach;~elem;{jget; ~titan;parts};{if;{jget;~elem;cursed};{push;~raidtitancurseparts;{jget;_{category}raiddata;Parts.{jget;~elem;part_id}}}}}{sort; ~raidtitancurseparts}({join;{map;~item;{get;~raidtitancurseparts};{func.partidtoacro;{get;~item}}};,{space}}){space};None}{newline}
+          {func.titanemoji;{jget;~titan;enemy_name}}{space}{if;{get;~tier};>=;4;{func.curseacro;{jget;~titan;cursed_debuffs.0.bonus_type}}{space}{set; ~raidtitancurseparts; []}{foreach;~elem;{jget; ~titan;parts};{if;{jget;~elem;cursed};{push;~raidtitancurseparts;{jget;_{category}raiddata;Parts.{jget;~elem;part_id}}}}}{sort; ~raidtitancurseparts}({join;{map;~item;{get;~raidtitancurseparts};{func.partidtoacro;{get;~item}}};,{space}}){space};None}{newline}
         };create}
         {jset; ~embedfield; inline; true; create}
         {push; ~embedfields; {get; ~embedfield}}

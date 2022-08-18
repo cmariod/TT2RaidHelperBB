@@ -69,13 +69,18 @@ Related commands:
 
 {set; _{category}raidpreviewlastrun; {time;YYYYWW}}
 
-{set; ~raidbuff; {jget;~seedtierzone;area_buffs.0}}
+{set; ~raidbuff; 
+  {if;{func.jkeyexists;~raidtierzone;area_buffs};
+    {jget;~seedtierzone;area_buffs.0}
+  ;
+    {j;{"bonus_type": "None","bonus_amount": 0}}
+  }
+}
 {jset; _{category}cache ; {get; ~raidtierzone}.flagb; {get;~raidbuff}; create}
 
 {set; ~raidtier; {shift; {split; {get; ~raidtierzone}; -}}}
 {set; ~hitspercycle;
   {switch; {get; ~raidtier};
-    9999; 6;
     5; 6;
     4; 5;
     3; 4;
@@ -143,7 +148,11 @@ Related commands:
   {set; ~raidtitan{get;~index}name; {jget;~currtitan;enemy_name} }
   {jset; _{category}cache; {get; ~raidtierzone}.computed.titan{get;~index}.name; {get;~raidtitan{get;~index}name}; create}
   
-  {set; ~raidtitandebuff{get;~index}; {jget; ~currtitan; area_debuffs.0} }
+  {set; ~raidtitandebuff{get;~index}; {if;{func.jkeyexists;~titan;area_debuffs};
+    {jget; ~currtitan; area_debuffs.0} 
+  ;
+    {j;{"bonus_type": "None","bonus_amount": 0}}
+  }}
   {set; ~ishpmultdebuff; {bool;{jget;~raidtitandebuff{get;~index};bonus_type};endswith;HPMult}}
   {set; ~raidtitanparts{get;~index}; {jget; ~currtitan; parts} }
   {set; ~raidtitancurse{get;~index}; {jget; ~currtitan; cursed_debuffs.0} }
@@ -488,10 +497,10 @@ EffArmr: {realpad;{numformat;{math;/;{get;~raid{get;~enemyid}hpa};1000000};2}M;8
  {jget;~curseparts;2} {jget;~curseparts;0} {jget;~curseparts;7}  |  {jget;~titanstrategy;2} {jget;~titanstrategy;0} {jget;~titanstrategy;7}
  {jget;~curseparts;3} {jget;~curseparts;1} {jget;~curseparts;6}  |  {jget;~titanstrategy;3} {jget;~titanstrategy;1} {jget;~titanstrategy;6}
   {jget;~curseparts;4} {jget;~curseparts;5}   |   {jget;~titanstrategy;4} {jget;~titanstrategy;5}```
-    ;{newline}```Strategy
-{jget;~titanstrategy;2} {jget;~titanstrategy;0} {jget;~titanstrategy;7}
-{jget;~titanstrategy;3} {jget;~titanstrategy;1} {jget;~titanstrategy;6}
- {jget;~titanstrategy;4} {jget;~titanstrategy;5}```
+    ;{newline}``` Strat
+ {jget;~titanstrategy;2} {jget;~titanstrategy;0} {jget;~titanstrategy;7}
+ {jget;~titanstrategy;3} {jget;~titanstrategy;1} {jget;~titanstrategy;6}
+  {jget;~titanstrategy;4} {jget;~titanstrategy;5}```
     }
   ;create}
   {jset; ~embedfield; inline; true ;create}

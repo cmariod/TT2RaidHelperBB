@@ -32,10 +32,10 @@ Show all possible debuff for titan (mohaca)
   {if;{get;~isstarted};
     {foreach;~titan;{jget;~raidtierzone;titans};
       {if;{argslength};==;0;
-        {jset;~debuff;{jget;~titan;enemy_id}{jget;~titan;enemy_name}.{func.debuffformat;{jget;~titan;area_debuffs.0}};1;create}
+        {jset;~debuff;{jget;~titan;enemy_id}{jget;~titan;enemy_name}.{if;{func.jkeyexists;~titan;area_debuffs};{func.debuffformat;{jget;~titan;area_debuffs.0}};No Debuff};1;create}
       ;
         {if;{jget;~titan;enemy_name};==;{get;~titanname};
-          {jset;~debuff;{jget;~titan;enemy_id}{jget;~titan;enemy_name}.{func.debuffformat;{jget;~titan;area_debuffs.0}};1;create}
+          {jset;~debuff;{jget;~titan;enemy_id}{jget;~titan;enemy_name}.{if;{func.jkeyexists;~titan;area_debuffs};{func.debuffformat;{jget;~titan;area_debuffs.0}};No Debuff};1;create}
         }
       }
     }

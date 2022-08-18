@@ -9,15 +9,23 @@
 }}
 
 {func;buffformat;{clean;
-  {set;~percent;{func.topercent;{jget; {params;0}; bonus_amount}}}{switch;{jget; {params;0}; bonus_type};
-    RaidAttackDuration;
-      +{jget; {params;0}; bonus_amount}s {func.camelcasespacer;{jget; {params;0}; bonus_type}};
-    +{if;{get;~percent};>=;100.0;{math;-;{get;~percent};100};{get;~percent}}% {func.camelcasespacer;{jget; {params;0}; bonus_type}}
-  }
+  {if;{jget; {params;0}; bonus_type};==;None;
+    No Buff
+  ;
+    {set;~percent;{func.topercent;{jget; {params;0}; bonus_amount}}}{switch;{jget; {params;0}; bonus_type};
+      RaidAttackDuration;
+        +{jget; {params;0}; bonus_amount}s {func.camelcasespacer;{jget; {params;0}; bonus_type}};
+      +{if;{get;~percent};>=;100.0;{math;-;{get;~percent};100};{get;~percent}}% {func.camelcasespacer;{jget; {params;0}; bonus_type}}
+    }
+  }  
 }}
 
 {func;debuffformat;{clean;
-  {set;~percent;{func.topercent;{jget; {params;0}; bonus_amount}}}{if;{jget; {params;0}; bonus_type};endswith;HPMult;{if;{get;~percent};>;0;+{get;~percent};{get;~percent}};{if;{get;~percent};>;0;{math;-;{get;~percent};100};{get;~percent}}}% {func.camelcasespacer;{jget; {params;0}; bonus_type}}
+  {if;{jget; {params;0}; bonus_type};==;None;
+    No Debuff
+  ;
+    {set;~percent;{func.topercent;{jget; {params;0}; bonus_amount}}}{if;{jget; {params;0}; bonus_type};endswith;HPMult;{if;{get;~percent};>;0;+{get;~percent};{get;~percent}};{if;{get;~percent};>;0;{math;-;{get;~percent};100};{get;~percent}}}% {func.camelcasespacer;{jget; {params;0}; bonus_type}}
+  }
 }}
 
 {func;buffdebuffacro;{join;{slice;{regexmatch;{jget; {params;0}; bonus_type};/[A-Z][A-Za-z]/g};0;3};}{jget; {params;0}; bonus_amount}}

@@ -45,7 +45,15 @@ Example:
 {if; {isarray;{get;~seed}};
   {set; _{category}seed; {j;{}}}
   {foreach;~elem;~seed;
-    {jset; _{category}seed; {jget;~elem;tier}-{jget;~elem;level}; {get; ~elem}; create}
+    {if;{jget;~elem;tier};==;9999;
+      {set;~tier;5}
+      {set;~raidjson;{get; ~elem}}
+      {jset;~raidjson;tier;{get;~tier}}
+    ;
+      {set;~tier;{jget;~elem;tier}}
+      {set;~raidjson;{get; ~elem}}
+    }
+    {jset; _{category}seed; {get;~tier}-{jget;~elem;level}; {get; ~raidjson}; create}
   }
   
   {output; {jget;~attachmentparts;7} {jget;~attachmentparts;8} {jget;~attachmentparts;9} loaded }

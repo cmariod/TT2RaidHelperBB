@@ -62,12 +62,17 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
     
     {set; ~embed; {j;{}}}
     {jset; ~embed; title; Titan Strategy List for {args;0};create}
-    {jset; ~embed; description; {func.buffformat;{jget;_{category}seed;{args;0}.area_buffs.0}}{newline}Sequence: {join;{map;~item;{get; ~spawnsequence};{increment;~idx}{func.titanemoji;{get;~item}}};{space}} ;create}
+    {jset; ~embed; description; {if;{func.jkeyexists;~raidtierzone;area_buffs};{func.buffformat;{jget;_{category}seed;{args;0}.area_buffs.0}};None}{newline}Sequence: {join;{map;~item;{get; ~spawnsequence};{increment;~idx}{func.titanemoji;{get;~item}}};{space}} ;create}
     {jset; ~embed; footer.text; Seed: {get;_{category}loadedseed} | (O)Hit (X)Avoid ;create}
     {set; ~embedfields; []}
     {foreach;~titan;{jget;_{category}seed;{args;0}.titans};
       {set; ~enemyname; {jget;~titan;enemy_name}}
-      {set; ~debuffid; {func.buffid;{jget;~titan;area_debuffs.0}}}
+      {set; ~titandebuff; {if;{func.jkeyexists;~titan;area_debuffs};
+        {jget; ~titan; area_debuffs.0} 
+      ;
+        {j;{"bonus_type": "None","bonus_amount": 0}}
+      }}
+      {set; ~debuffid; {func.buffid;{get;~titandebuff}}}
       {set; ~basehp;{jget;~titan;total_hp}}
       {set; ~enemyid; {jget; ~titan; enemy_id}}
       {set; ~titanstrategy; {split;{func.stratformat;{jget;_{category}strat;{if;{func.jkeyexists;_{category}strat;{get;~debuffid}.{get;~enemyid}};{get;~debuffid};Default}.{get;~enemyid}}};}}
@@ -118,8 +123,8 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
       }}
       
       {set; ~embedfield; {j}}
-      {jset; ~embedfield; name; {func.titanemoji;{get; ~enemyname}} {get; ~enemyname} ({func.curseacro;{jget;~titan;cursed_debuffs.0}} Cursed) {if; {get; ~totalbody}; <; {get;~basehp}; 🆘} ;create}
-      {jset; ~embedfield; value; {func.debuffformat;{jget;~titan;area_debuffs.0}}``` {jget;~curseparts;2} {jget;~curseparts;0} {jget;~curseparts;7}    |    {jget;~titanstrategy;2} {jget;~titanstrategy;0} {jget;~titanstrategy;7}{newline} {jget;~curseparts;3} {jget;~curseparts;1} {jget;~curseparts;6}    |    {jget;~titanstrategy;3} {jget;~titanstrategy;1} {jget;~titanstrategy;6}{newline}  {jget;~curseparts;4} {jget;~curseparts;5}     |     {jget;~titanstrategy;4} {jget;~titanstrategy;5}{newline}Base HP:  {realpad;{numformat;{math;/;{get;~basehp};1000000};2}M;11;{space};left}{newline}Eff Body:  {realpad;{numformat;{math;/;{get;~totalbody};1000000};2}M;10;{space};left}{newline}Eff Armor: {realpad;{numformat;{math;/;{get;~totalarmor};1000000};2}M;10;{space};left}{newline}Eff VMBody: {realpad;{numformat;{math;/;{get;~vmbodyhp};1000000};2}M;9;{space};left}{newline}Total Dmg: {realpad;{numformat;{math;/;{get;~totaldamage};1000000};2}M;10;{space};left}```;create}
+      {jset; ~embedfield; name; {func.titanemoji;{get; ~enemyname}} {get; ~enemyname} ({if;{func.jkeyexists;~titan;cursed_debuffs};{func.curseacro;{jget;~titan;cursed_debuffs.0}};No} Cursed) {if; {get; ~totalbody}; <; {get;~basehp}; 🆘} ;create}
+      {jset; ~embedfield; value; {func.debuffformat;{get;~titandebuff}}``` {jget;~curseparts;2} {jget;~curseparts;0} {jget;~curseparts;7}    |    {jget;~titanstrategy;2} {jget;~titanstrategy;0} {jget;~titanstrategy;7}{newline} {jget;~curseparts;3} {jget;~curseparts;1} {jget;~curseparts;6}    |    {jget;~titanstrategy;3} {jget;~titanstrategy;1} {jget;~titanstrategy;6}{newline}  {jget;~curseparts;4} {jget;~curseparts;5}     |     {jget;~titanstrategy;4} {jget;~titanstrategy;5}{newline}Base HP:  {realpad;{numformat;{math;/;{get;~basehp};1000000};2}M;11;{space};left}{newline}Eff Body:  {realpad;{numformat;{math;/;{get;~totalbody};1000000};2}M;10;{space};left}{newline}Eff Armor: {realpad;{numformat;{math;/;{get;~totalarmor};1000000};2}M;10;{space};left}{newline}Eff VMBody: {realpad;{numformat;{math;/;{get;~vmbodyhp};1000000};2}M;9;{space};left}{newline}Total Dmg: {realpad;{numformat;{math;/;{get;~totaldamage};1000000};2}M;10;{space};left}```;create}
       {jset; ~embedfield; inline; true ;create}
       {push; ~embedfields; {get; ~embedfield}}
 
@@ -154,8 +159,13 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
   {set; ~debuff;Default}
 ;
   {set; ~titan; {shift;{filter;~element;{jget; _{category}seed; {args;1}.titans};{bool;{capitalize;{jget;~element;enemy_name}};startswith;{capitalize;{args; 0}}}}}}
+  {set; ~titandebuff; {if;{func.jkeyexists;~titan;area_debuffs};
+    {jget; ~titan; area_debuffs.0} 
+  ;
+    {j;{"bonus_type": "None","bonus_amount": 0}}
+  }}
   {set; ~enemyid; {jget; ~titan; enemy_id}}
-  {set; ~debuff;{func.buffid;{jget;~titan;area_debuffs.0}}}
+  {set; ~debuff;{func.buffid;{get;~titandebuff}}}
   {set; ~titanname; {jget; ~titan; enemy_name}}
 }
 
@@ -165,4 +175,4 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
 
 {jset; _{category}strat; {get;~debuff}.{get; ~enemyid}; {get;~stratset}; create}
 
-{output; {get; ~titanname} {if;{argslength};==;2;Default;{func.debuffformat;{jget;~titan;area_debuffs.0}}} strategy set to {capitalize;{get;~stratset};lower}}
+{output; {get; ~titanname} {if;{argslength};==;2;Default;{func.debuffformat;{get;~titandebuff}}} strategy set to {capitalize;{get;~stratset};lower}}

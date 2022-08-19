@@ -70,7 +70,7 @@ Related commands:
 {set; _{category}raidpreviewlastrun; {time;YYYYWW}}
 
 {set; ~raidbuff; 
-  {if;{func.jkeyexists;~raidtierzone;area_buffs};
+  {if;{func.jkeyexists;~seedtierzone;area_buffs};
     {jget;~seedtierzone;area_buffs.0}
   ;
     {j;{"bonus_type": "None","bonus_amount": 0}}
@@ -148,7 +148,7 @@ Related commands:
   {set; ~raidtitan{get;~index}name; {jget;~currtitan;enemy_name} }
   {jset; _{category}cache; {get; ~raidtierzone}.computed.titan{get;~index}.name; {get;~raidtitan{get;~index}name}; create}
   
-  {set; ~raidtitandebuff{get;~index}; {if;{func.jkeyexists;~titan;area_debuffs};
+  {set; ~raidtitandebuff{get;~index}; {if;{func.jkeyexists;~currtitan;area_debuffs};
     {jget; ~currtitan; area_debuffs.0} 
   ;
     {j;{"bonus_type": "None","bonus_amount": 0}}

@@ -280,7 +280,7 @@ Related commands:
       {increment; ~cursemod{get;~index}; {math;*;
         {parsefloat;{if; {indexof;{get;~raidtitancurseparts{get;~index}};{get;~partid}a}; !=; -1; {jget;~raidtitancurse{get;~index};bonus_amount}; 0}};
         {if; {get;~ispartinstrat}; 0.5; 1};
-        {if; {jget;~raidtitancurse{get;~index};bonus_type}; startswith; Burst; 0.6; 0.4}
+        {switch;{shift;{regexmatch;{jget;~raidtitancurse{get;~index};bonus_type};/[A-Z]+[a-z]+/g}};Burst;0.6;Afflicted;0.4;Body;0.1;0}
       }; false}
     }
     

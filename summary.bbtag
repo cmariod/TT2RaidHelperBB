@@ -56,6 +56,7 @@ Parameters:
 {set; ~hitsusedlabel; 0}
 {set; ~isfullivdefault; {func.parsebool;{jget;_{category}raidconfig;fulliv}}}
 
+{set;~debug; []}
 {for;~index;1;<;4;
 
 {set;~sequence;{split;{jget;~computeddata;titan{get;~index}.armorsequence};}}
@@ -65,16 +66,14 @@ Parameters:
   {push;~stratsequence;{math;*;{jget;~strat;{get;~i}};{jget;~sequence;{get;~i}}}}
 }
 
-{set;~cursedpart;{map;~part;{jget; ~summarydata; curse{get;~index}.parts};{substring;{get;~part};0;1}}}
+{set;~cursedpart{get;~index};{map;~part;{jget; ~summarydata; curse{get;~index}.parts};{substring;{get;~part};0;1}}}
 {set;~cursedsequence;[]}
 {set;~armorsequence;[]}
-{set;~debug;[]}
 {for;~i;1;<;9;
   {set;~indexof;{indexof;{get;~stratsequence};{get;~i}}}
   {if;{get;~indexof};>;-1;
     {set;~partid;{math;+;{get;~indexof};2}}
-    {push;~debug;{get;~partid}}
-    {if;{indexof;{get;~cursedpart};{get;~partid}};>;-1;
+    {if;{indexof;{get;~cursedpart{get;~index}};{get;~partid}};>;-1;
       {push;~cursedsequence;{get;~partid}}
     ;
       {push;~armorsequence;{get;~partid}}
@@ -254,18 +253,20 @@ Parameters:
 {set; ~embed; {j;{}}}
 {jset; ~embed; title; {get; _{category}raidtierzone} Strat @ {numformat;{get; ~bavgmil};2}M avg DMG;create}
 {jset; ~embed; description; RaidBuff : {jget; ~computeddata; buff.text}{newline}MoraleBuff : +{get; _{category}activeraidmorale}% ;create}
-{jset; ~embed; footer.text; Disclaimer:{newline}Strategy are subject to change depends on actual progress.{newline}Stay tuned for any announcement.;create}
+
 {set; ~embedfields; []}
 
 {for;~index;1;<;4;
 
 {set; ~humanestrat; {split;{regexreplace;{regexreplace;{jget;~computeddata;titan{get;~index}.strat};/1/gi;O};/0/gi;X};}}
-{foreach;~elem;{get;~cursedpart};
-  {set;~partindex;{math;-;{get;~elem};2}}
+{foreach;~elem;{get;~cursedpart{get;~index}};
+  {set;~partindex;{parseint;{math;-;{get;~elem};2}}}
   {if;{jget;~humanestrat;{get;~partindex}};==;O;
     {jset;~humanestrat;{get;~partindex};C}
   }
 }
+
+{jset; ~embed; footer.text; Disclaimer:{newline}Strategy are subject to change depends on actual progress.{newline}Stay tuned for any announcement.;create}
 
 {set; ~embedfield; {j}}
 {jset; ~embedfield; name; {jget; ~computeddata; titan{get;~index}.name} ;create}

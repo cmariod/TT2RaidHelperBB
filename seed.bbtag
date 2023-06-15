@@ -37,9 +37,12 @@ Example:
 {set;_{category}loadedseed;{jget;~attachmentparts;9}}
 
 {set; ~seed; 
-  {jclean; {jget; 
-    {request; {get;~attachments} }
-  ; body}}
+  {jget; 
+    {jclean; {jget; 
+      {request; {get;~attachments} }
+    ; body}}
+  ; raids
+  }
 }
 
 {if; {isarray;{get;~seed}};

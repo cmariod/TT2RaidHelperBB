@@ -5,3 +5,11 @@
     {request; https://raw.githubusercontent.com/cmariod/TT2RaidHelperBB/master/examples/raiddata.json }
   ; body}}
 }
+
+{set; _{category}strat; 
+  {jclean; {jget; 
+    {request; https://raw.githubusercontent.com/cmariod/TT2RaidHelperBB/master/examples/raidstrat.json }
+  ; body}}
+}
+
+{output;Done!}

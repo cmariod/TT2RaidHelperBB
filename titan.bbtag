@@ -89,18 +89,18 @@ Example to Set Mohaca for currently loaded raid 4-1's Debuff to not hit head(2) 
       {foreach;~part;{jget;~titan;parts};
         {set;~partjson;{j}}
         {jset;~partjson;id;{jget;_{category}raiddata;Parts.{jget;~part;part_id}};create}
-        {jset;~partjson;hp;{jget;~part;total_hp};create}
+        {jset;~partjson;hp;{jget;~part;current_hp};create}
 
         {if;{jget;~part;cursed}; {push;~raidtitancurseparts;{jget;_{category}raiddata;Parts.{jget;~part;part_id}}}}
 
         {if;{jget;~part;part_id};startswith;Body;
           {push;~body;{get;~partjson}}
-          {increment;~allbody;{jget;~part;total_hp};false}
-          {if;{jget;~partstrategy;{substring;{jget;~partjson;id};0;1}};>;0;{increment;~totalbody;{jget;~part;total_hp};false}{push;~bodypartsonstrat;{jget;~part;total_hp}}}
+          {increment;~allbody;{jget;~part;current_hp};false}
+          {if;{jget;~partstrategy;{substring;{jget;~partjson;id};0;1}};>;0;{increment;~totalbody;{jget;~part;current_hp};false}{push;~bodypartsonstrat;{jget;~part;current_hp}}}
         ;
           {push;~armor;{get;~partjson}}
-          {increment;~allarmor;{jget;~part;total_hp};false}
-          {if;{jget;~partstrategy;{substring;{jget;~partjson;id};0;1}};>;0;{increment;~totalarmor;{jget;~part;total_hp};false}}
+          {increment;~allarmor;{jget;~part;current_hp};false}
+          {if;{jget;~partstrategy;{substring;{jget;~partjson;id};0;1}};>;0;{increment;~totalarmor;{jget;~part;current_hp};false}}
         }
       }
 

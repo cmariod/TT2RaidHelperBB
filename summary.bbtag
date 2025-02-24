@@ -274,8 +274,7 @@ Parameters:
 {jset; ~embedfield; value; {jget; ~computeddata; debuff{get;~index}.text}{newline}```
  {jget;~humanestrat;2} {jget;~humanestrat;0} {jget;~humanestrat;7}  Curse:
  {jget;~humanestrat;3} {jget;~humanestrat;1} {jget;~humanestrat;6}  {func.curseacro;{jget; ~summarydata; curse{get;~index}.bonus_type}}
-  {jget;~humanestrat;4} {jget;~humanestrat;5}```Armor Priority:{newline}{if;{func.curseacro;{jget; ~summarydata; curse{get;~index}.bonus_type}};==;Body;Cursed Part Equally;{join;{map;~item;{get;~armorpriority{get;~index}};{func.partidtoacro;{get;~item}}};>} 
-};create}
+  {jget;~humanestrat;4} {jget;~humanestrat;5}```;create}
 {jset; ~embedfield; inline; true ;create}
 {push; ~embedfields; {get; ~embedfield}}
 

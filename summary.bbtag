@@ -21,6 +21,7 @@ Parameters:
 {set; ~hitspercycle;
   {switch; {get; ~raidtier};
     9999; 6;
+    6; 6;
     5; 6;
     4; 5;
     3; 4;
@@ -252,7 +253,7 @@ Parameters:
 
 {set; ~embed; {j;{}}}
 {jset; ~embed; title; {get; _{category}raidtierzone} Strat @ {numformat;{get; ~bavgmil};2}M avg DMG;create}
-{jset; ~embed; description; RaidBuff : {jget; ~computeddata; buff.text}{newline}MoraleBuff : +{get; _{category}activeraidmorale}% ;create}
+{jset; ~embed; description; RaidBuff : {jget; ~computeddata; buff.text}{newline}RaidMod : {numformat;{jget; ~computeddata; raidmod};2}{newline}MoraleBuff : +{get; _{category}activeraidmorale}% ;create}
 
 {set; ~embedfields; []}
 

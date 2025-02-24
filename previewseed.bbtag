@@ -81,6 +81,8 @@ Related commands:
 {set; ~raidtier; {shift; {split; {get; ~raidtierzone}; -}}}
 {set; ~hitspercycle;
   {switch; {get; ~raidtier};
+    9999; 6;
+    6; 6;
     5; 6;
     4; 5;
     3; 4;
@@ -104,8 +106,9 @@ Related commands:
 ; 
   {if; {get; ~iscacheexpired}; 
     {switch; {get; ~raidtier};
-      9999; 25;
-      5; 25;
+      9999; 30;
+      6; 30;
+      5; 20;
       4; 15;
       3; 10;
       2; 5;
@@ -176,14 +179,14 @@ Related commands:
     {jset;~raid{get;~enemyid}hptab;
       percent.{jget;_{category}raiddata;Parts.{jget;~elem;part_id}};
       {math;/;
-        {parsefloat;{jget;~elem;total_hp}};
+        {parsefloat;{jget;~elem;current_hp}};
         {parsefloat;{get;~raid{get;~enemyid}basehp}}
       }
       ;create
     }
     {jset;~raid{get;~enemyid}hptab;
       raw.{jget;_{category}raiddata;Parts.{jget;~elem;part_id}};
-      {parsefloat;{jget;~elem;total_hp}}
+      {parsefloat;{jget;~elem;current_hp}}
       ;create
     }
   }

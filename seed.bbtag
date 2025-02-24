@@ -49,7 +49,7 @@ Example:
   {set; _{category}seed; {j;{}}}
   {foreach;~elem;~seed;
     {if;{jget;~elem;tier};==;9999;
-      {set;~tier;5}
+      {set;~tier;6}
       {set;~raidjson;{get; ~elem}}
       {jset;~raidjson;tier;{get;~tier}}
     ;
